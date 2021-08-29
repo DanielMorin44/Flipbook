@@ -145,7 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 242f1310927788045b272d273bda7762, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  groundHorizontalSpeed: 5
+  inAirHorizontalSpeed: 3
   jumpForce: 5
 --- !u!68 &6704731901540149630
 EdgeCollider2D:

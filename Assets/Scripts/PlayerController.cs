@@ -5,11 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // public vars
-    public float speed;
+    public float groundHorizontalSpeed;
+    public float inAirHorizontalSpeed;
     public float jumpForce;
 
     // private state vars
     bool canJump, shouldJump;
+    bool inAir;
     float horizontalMove;
 
     Rigidbody2D rigidbody;
@@ -31,31 +33,43 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         Vector2 position = transform.position;
-        position.x = transform.position.x + (horizontalMove * speed * Time.deltaTime);
-        transform.position = position;
-
+        float speed;
         if (shouldJump)
         {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             canJump = false;
         }
+
+        if (!inAir)
+        {
+            speed = groundHorizontalSpeed;
+        }
+        else
+        {
+            speed = inAirHorizontalSpeed;
+        }
+        position.x = transform.position.x + (horizontalMove * speed * Time.deltaTime);
+        transform.position = position;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("A");
         // If we collide with terrain
-        if(collision.gameObject.tag == "terrain")
+        if (collision.gameObject.tag == "terrain")
         {
+            Debug.Log(collision.otherCollider.GetType());
             // If the bottom edge collided with terrain
             if (collision.otherCollider.GetType() == typeof(EdgeCollider2D))
             {
                 canJump = true;
                 Debug.Log("CanJump == true");
+                inAir = false;
             }
         }
     }
 
-    /*private void OnCollisionExit2D(Collision2D collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
         // If we leave collision with terrain
         if (collision.gameObject.tag == "terrain")
@@ -63,9 +77,8 @@ public class PlayerController : MonoBehaviour
             // If the bottom edge left the collision with terrain
             if (collision.otherCollider.GetType() == typeof(EdgeCollider2D))
             {
-                canJump = false;
-                Debug.Log("CanJump == false");
+                inAir = true;
             }
         }
-    }*/
+    }
 }
