@@ -13,13 +13,13 @@ public class PlayerController : MonoBehaviour
     bool canJump, shouldJump;
     bool inAir;
     float horizontalMove;
-
-    Rigidbody2D rigidbody;
+    bool canFlip;
 
     // Start is called before the first frame update
     void Start()
     {
         canJump = false;
+        canFlip = false;
     }
 
     // Update is called once per frame
@@ -52,33 +52,33 @@ public class PlayerController : MonoBehaviour
         transform.position = position;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("A");
-        // If we collide with terrain
+        // If the bottom edge collided with terrain
         if (collision.gameObject.tag == "terrain")
         {
-            Debug.Log(collision.otherCollider.GetType());
-            // If the bottom edge collided with terrain
-            if (collision.otherCollider.GetType() == typeof(EdgeCollider2D))
-            {
-                canJump = true;
-                Debug.Log("CanJump == true");
-                inAir = false;
-            }
+            canJump = true;
+            inAir = false;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         // If we leave collision with terrain
         if (collision.gameObject.tag == "terrain")
         {
-            // If the bottom edge left the collision with terrain
-            if (collision.otherCollider.GetType() == typeof(EdgeCollider2D))
-            {
-                inAir = true;
-            }
+            inAir = true;
         }
     }
+
+    public bool getFlipValue()
+    {
+        return canFlip;
+    }
+    
+    public void setFlipValue(bool value)
+    {
+        canFlip = value;
+    }
+
 }
