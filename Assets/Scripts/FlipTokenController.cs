@@ -12,10 +12,10 @@ public class FlipTokenController : MonoBehaviour
         if (collision.tag == "Player")
         {
             // If player can't flip
-            if (!player.getFlipValue())
+            if (!player.GetFlipValue())
             {
                 //Destroy Token and allow player to flip
-                player.setFlipValue(true);
+                player.SetFlipValue(true);
                 Destroy(gameObject);
             }
         }
