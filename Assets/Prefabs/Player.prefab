@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 559436929189114032}
   - component: {fileID: 364658857191716412}
   - component: {fileID: 1898420236}
+  - component: {fileID: 1898420237}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -147,3 +148,21 @@ MonoBehaviour:
   groundHorizontalSpeed: 5
   inAirHorizontalSpeed: 4.5
   jumpForce: 5
+  levelManager: {fileID: 0}
+  inputController: {fileID: 0}
+--- !u!58 &1898420237
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559436929189113997}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.165}
+  serializedVersion: 2
+  m_Radius: 0.0032167633

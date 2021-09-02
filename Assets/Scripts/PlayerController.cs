@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float inAirHorizontalSpeed;
     public float jumpForce;
     public LevelManager levelManager;
+    public InputController inputController;
 
     // private state vars
     bool canJump, shouldJump;
@@ -28,18 +29,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("r"))
-        {
-            shouldReset = true;
-        }
-        horizontalMove = Input.GetAxis("Horizontal");
-        // We should jump if user is pressing jump button and the player is allowed to jump
-        shouldJump = (Input.GetAxis("Jump") != 0) && canJump;
-        if (Input.GetKeyDown("f") && canFlip)
-        {
-            shouldFlip = true;
-            canFlip = false;
-        }
 
     }
 
@@ -49,7 +38,7 @@ public class PlayerController : MonoBehaviour
         float speed;
         if (shouldReset)
         {
-            Reset();
+            ResetPlayer();
             return;
         }
         if (shouldJump)
@@ -96,17 +85,53 @@ public class PlayerController : MonoBehaviour
     private void Flip()
     {
         shouldFlip = false;
-        levelManager.FlipLevel();
+        // CanFlip = true if flip failed
+        inputController.InitiateFlip();
+    }
+
+    public void FlipSuccess()
+    {
+        canFlip = false;
     }
 
     public bool GetFlipValue()
     {
         return canFlip;
     }
-    
+
     public void SetFlipValue(bool value)
     {
         canFlip = value;
+    }
+
+    public void SetShouldReset(bool value)
+    {
+        shouldReset = value;
+    }
+
+    public void SetHorizontalMove(float value)
+    {
+        horizontalMove = value;
+    }
+
+    public void SetShouldJump(bool value)
+    {
+        shouldJump = value;
+    }
+
+    public bool GetCanJump()
+    {
+        return canJump;
+    }
+
+    public void SetShouldFlip(bool value)
+    {
+        shouldFlip = value;
+    }
+
+    public bool GetCanFlip()
+    {
+        return canFlip;
     }
 
     public void Kill()
@@ -114,9 +139,9 @@ public class PlayerController : MonoBehaviour
         levelManager.PlayerDied();
     }
 
-    private void Reset()
+    private void ResetPlayer()
     {
-        shouldReset = false;
+        SetShouldReset(false);
         Kill();
     }
 

@@ -8,22 +8,35 @@ public class LevelManager : MonoBehaviour
     public PlayerController player;
     public GameObject[] flipCandidates;
 
-    public bool level0;
+    public int curLevelIndex = 0;
 
-    public void FlipLevel()
+    public bool FlipLevel(int index)
     {
+        if (index >= flipCandidates.Length)
+        {
+            Debug.Log("Out of Bounds Index Selected");
+            return false;
+        }
+        if(index == curLevelIndex)
+        {
+            Debug.Log("Selected Level same as current");
+            return false;
+        }
         Debug.Log("Level Manager Flipping");
-        if (level0)
-        {
-            flipCandidates[0].SetActive(true);
-            flipCandidates[1].SetActive(false);
-        }
-        else
-        {
-            flipCandidates[0].SetActive(false);
-            flipCandidates[1].SetActive(true);
-        }
-        level0 = !level0;
+        flipCandidates[index].SetActive(true);
+        flipCandidates[curLevelIndex].SetActive(false);
+        curLevelIndex = index;
+        return true;
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
     }
 
     public void PlayerDied()
