@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90797615}
   - component: {fileID: 90797616}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,6 +267,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1393931880}
     - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: wallJumpAngle
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: wallJumpForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: wallStickiness
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
       propertyPath: inputController
       value: 
       objectReference: {fileID: 982990683}
@@ -341,7 +353,7 @@ GameObject:
   m_Component:
   - component: {fileID: 817390262}
   - component: {fileID: 817390261}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GridLevel1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -470,6 +482,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3537866728298833632, guid: 1494a49b400d8d64eaa3e5590e2efd3f, type: 3}
+      propertyPath: m_Size.y
+      value: 14.8483925
+      objectReference: {fileID: 0}
+    - target: {fileID: 3537866728298833632, guid: 1494a49b400d8d64eaa3e5590e2efd3f, type: 3}
+      propertyPath: m_Offset.y
+      value: 1.2939701
+      objectReference: {fileID: 0}
     - target: {fileID: 3537866728298833633, guid: 1494a49b400d8d64eaa3e5590e2efd3f, type: 3}
       propertyPath: player
       value: 
@@ -546,7 +566,7 @@ GameObject:
   - component: {fileID: 1847221292}
   - component: {fileID: 1847221291}
   - component: {fileID: 1847221290}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tilemap
   m_TagString: terrain
   m_Icon: {fileID: 0}
@@ -1049,7 +1069,7 @@ GameObject:
   - component: {fileID: 2101332964}
   - component: {fileID: 2101332968}
   - component: {fileID: 2101332967}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tilemap
   m_TagString: terrain
   m_Icon: {fileID: 0}

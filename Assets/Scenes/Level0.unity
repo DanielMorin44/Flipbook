@@ -296,7 +296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 817390262}
   - component: {fileID: 817390261}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,7 +426,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2009755454}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Level0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 2101332964}
   - component: {fileID: 2101332968}
   - component: {fileID: 2101332967}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tilemap
   m_TagString: terrain
   m_Icon: {fileID: 0}
@@ -1087,6 +1087,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: End
       objectReference: {fileID: 0}
+    - target: {fileID: 7675239715755028662, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
       propertyPath: player
       value: 
@@ -1156,6 +1160,10 @@ PrefabInstance:
     - target: {fileID: 8499143497396908540, guid: ab70084807845c94294150de515757a3, type: 3}
       propertyPath: m_Name
       value: FlipToken
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499143497396908540, guid: ab70084807845c94294150de515757a3, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab70084807845c94294150de515757a3, type: 3}

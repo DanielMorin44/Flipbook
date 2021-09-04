@@ -34,7 +34,10 @@ public class InputController : MonoBehaviour
                 }
                 player.SetHorizontalMove(Input.GetAxis("Horizontal"));
                 // We should jump if user is pressing jump button and the player is allowed to jump
-                player.SetShouldJump((Input.GetAxis("Jump") != 0) && player.GetCanJump());
+                if((Input.GetKeyDown("space")) && player.GetCanJump() && ! player.GetShouldJump())
+                {
+                    player.SetShouldJump(true);
+                }
                 if (Input.GetKeyDown("f") && player.GetCanFlip())
                 {
                     player.SetShouldFlip(true);
