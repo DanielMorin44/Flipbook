@@ -183,6 +183,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1898420236}
     - target: {fileID: 7675633065868447229, guid: 1f0d15856f82fd24195c731c784e4026, type: 3}
+      propertyPath: curLevelIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7675633065868447229, guid: 1f0d15856f82fd24195c731c784e4026, type: 3}
+      propertyPath: playerCollider
+      value: 
+      objectReference: {fileID: 559436929275552977}
+    - target: {fileID: 7675633065868447229, guid: 1f0d15856f82fd24195c731c784e4026, type: 3}
       propertyPath: flipCandidates.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -427,7 +435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2009755454}
   m_Layer: 3
-  m_Name: Level0
+  m_Name: Page0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -851,7 +859,7 @@ CompositeCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
+  m_GeometryType: 1
   m_GenerationType: 0
   m_EdgeRadius: 0
   m_ColliderPaths:
@@ -914,6 +922,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: checkWidth
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 16496265}
@@ -971,6 +983,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+--- !u!61 &559436929275552977 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 364658857191716412, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+  m_PrefabInstance: {fileID: 559436929275552976}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2343857869627353502
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1095,6 +1112,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1898420236}
+    - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
+      propertyPath: nextScene
+      value: Page1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
 --- !u!4 &7675239716239366361 stripped

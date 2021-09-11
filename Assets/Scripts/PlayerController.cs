@@ -4,25 +4,32 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // public vars
+    // Public vars
+    // Speeds
     public float groundHorizontalSpeed;
     public float inAirHorizontalSpeed;
+    public float wallSlidingSpeed;
+
+    // Forces
     public float jumpForce;
     public float wallJumpForce;
     public float wallJumpAngle;
-    public float wallStickiness;
-    public float wallStickDuration;
+
+    // Times
+    public float wallJumpTime;
+    public float moveLockOnWallJump;
+
+    // Sizes
+    public float checkWidth;
+
+    // Objects
     public LevelManager levelManager;
     public InputController inputController;
-    public CircleCollider2D bottomCollider;
-    public CircleCollider2D leftCollider;
-    public CircleCollider2D topCollider;
-    public CircleCollider2D rightCollider;
+    public Transform bottomCheck;
+    public Transform frontCheck;
 
-    // Private component vars
-    private Rigidbody2D rigidbody;
-
-    // private state vars
+    // Private vars
+    // state vars
     bool canJump, shouldJump;
     public void SetShouldJump(bool value)
     {
@@ -62,7 +69,33 @@ public class PlayerController : MonoBehaviour
         horizontalMove = value;
     }
 
+    bool isFacingRight;
+    bool isFrontTouchingWall;
+    bool wallSliding;
+    bool wallJumping;
     bool inAir;
+
+    // Time Vars
+    float moveLockedTime;
+    public float GetMoveLockedTime()
+    {
+        return moveLockedTime;
+    }
+    public bool IsPlayerLocked()
+    {
+        if (moveLockedTime > 0f)
+        {
+            return true;
+        }
+        return false;
+    }
+    public void SetMoveLockedTime(float value)
+    {
+        moveLockedTime = value;
+    }
+
+    // Objects
+    private Rigidbody2D rb2d;
     LayerMask terrain;
 
     // Start is called before the first frame update
@@ -71,20 +104,38 @@ public class PlayerController : MonoBehaviour
         canJump = false;
         canFlip = false;
         shouldReset = false;
+        wallSliding = false;
+        isFacingRight = true;
+        moveLockedTime = 0f;
         terrain = LayerMask.GetMask("terrain");
-        rigidbody = GetComponent<Rigidbody2D>();
+        rb2d = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        DoTerrainChecks();
+        if (!inAir || isFrontTouchingWall)
+        {
+            canJump = true;
+        }
+        wallSliding = (isFrontTouchingWall && inAir && (horizontalMove != 0));
 
+        // Tick down movement lock time
+        if (moveLockedTime > 0f)
+        {
+            moveLockedTime -= Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()
     {
-        Vector2 position = transform.position;
         float speed;
+        if ((horizontalMove > 0f && !isFacingRight) ||
+            horizontalMove < 0f && isFacingRight)
+        {
+            ReverseFacing();
+        }
         if (shouldReset)
         {
             ResetPlayer();
@@ -98,7 +149,19 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
+        if (wallJumping)
+        {
+            Vector2 jumpVector = new Vector2(0, 0);
+            jumpVector.y = wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad);
+            jumpVector.x = wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad);
+            if (isFacingRight)
+            {
+                jumpVector.x = -jumpVector.x;
+            }
+            rb2d.velocity = jumpVector;
+        }
 
+        if (IsPlayerLocked()) return;
         if (!inAir)
         {
             speed = groundHorizontalSpeed;
@@ -107,45 +170,16 @@ public class PlayerController : MonoBehaviour
         {
             speed = inAirHorizontalSpeed;
         }
-        position.x = transform.position.x + (horizontalMove * speed * Time.deltaTime);
-        transform.position = position;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // If the bottom edge collided with terrain
-        if (bottomCollider.IsTouchingLayers(terrain))
+        if (horizontalMove != 0)
         {
-            StopHorizontalVelocity();
-            StopVerticalVelocity();
-            canJump = true;
-            inAir = false;
-        }
-        // If the left edge collided with terrain
-        if (leftCollider.IsTouchingLayers(terrain))
-        {
-            StopHorizontalVelocity();
-            if (!bottomCollider.IsTouchingLayers(terrain))
+            float xVel = (horizontalMove * speed);
+            float yVel = rb2d.velocity.y;
+            if (wallSliding)
             {
-                canJump = true;
+                xVel = 0;
+                yVel = Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue);
             }
-        }
-        // If the right edge collided with terrain
-        if (rightCollider.IsTouchingLayers(terrain))
-        {
-            StopHorizontalVelocity();
-            if (!bottomCollider.IsTouchingLayers(terrain))
-            {
-                canJump = true;
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (!bottomCollider.IsTouchingLayers(terrain))
-        {
-            inAir = true;
+            rb2d.velocity = new Vector2(xVel, yVel);
         }
     }
 
@@ -158,28 +192,23 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (IsPlayerLocked()) return;
         //Cancel Player's Current Vertical velocity
-        StopVerticalVelocity();
-        Vector2 jumpVector = new Vector2(0, 0);
         // If player is on ground, set jump vector normally
         if (!inAir)
         {
+            Vector2 jumpVector = new Vector2(0, 0);
+            StopVerticalVelocity();
             jumpVector.y = jumpForce;
+            rb2d.velocity = jumpVector;
         }
-        else
+        else if(wallSliding)
         {
-            jumpVector.y = wallJumpForce*Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad);
-            if (leftCollider.IsTouchingLayers(terrain))
-            {
-                jumpVector.x = wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad);
-            }
-            if (rightCollider.IsTouchingLayers(terrain))
-            {
-                jumpVector.x = -1 * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad);
-            }
+            wallJumping = true;
+            Invoke("SetWallJumpToFalse", wallJumpTime);
+            SetMoveLockedTime(moveLockOnWallJump);
         }
-
-        rigidbody.AddForce(jumpVector, ForceMode2D.Impulse);
+        //rb2d.AddForce(jumpVector, ForceMode2D.Impulse);
         SetShouldJump(false);
         canJump = false;
     }
@@ -187,6 +216,17 @@ public class PlayerController : MonoBehaviour
     public void FlipSuccess()
     {
         canFlip = false;
+    }
+
+    private void ReverseFacing()
+    {
+        transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+        isFacingRight = !isFacingRight;
+    }
+    
+    private void SetWallJumpToFalse()
+    {
+        wallJumping = false;
     }
 
     public void Kill()
@@ -202,12 +242,19 @@ public class PlayerController : MonoBehaviour
 
     private void StopVerticalVelocity()
     {
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+        rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
     }
 
     private void StopHorizontalVelocity()
     {
-        rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+        rb2d.velocity = new Vector2(0, rb2d.velocity.y);
+    }
+
+    private void DoTerrainChecks()
+    {
+        // Check Contact points for touching terrain
+        inAir = !Physics2D.OverlapBox(bottomCheck.position, new Vector2( GetComponent<Collider2D>().bounds.size.x * .9f, checkWidth), 0, terrain);
+        isFrontTouchingWall = Physics2D.OverlapBox(frontCheck.position, new Vector2(checkWidth, GetComponent<Collider2D>().bounds.size.y * .9f), 0, terrain);
     }
 
 }

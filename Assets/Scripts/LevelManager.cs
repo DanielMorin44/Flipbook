@@ -7,8 +7,15 @@ public class LevelManager : MonoBehaviour
 {
     public PlayerController player;
     public GameObject[] flipCandidates;
+    public Collider2D playerCollider;
 
     public int curLevelIndex = 0;
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
 
     public bool FlipLevel(int index)
     {
@@ -22,8 +29,13 @@ public class LevelManager : MonoBehaviour
             Debug.Log("Selected Level same as current");
             return false;
         }
+        if (!CheckFlipAllowed(index))
+        {
+            Debug.Log("Terrain in the way!");
+            return false;
+        }
+
         Debug.Log("Level Manager Flipping");
-        flipCandidates[index].SetActive(true);
         flipCandidates[curLevelIndex].SetActive(false);
         curLevelIndex = index;
         return true;
@@ -43,5 +55,25 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log("You Died");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private bool CheckFlipAllowed(int index)
+    {
+        flipCandidates[index].SetActive(true);
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(playerCollider.bounds.center, 
+                                                        new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * .9f),
+                                                        0,
+                                                        LayerMask.GetMask("terrain"));
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Component collider = flipCandidates[index].GetComponentInChildren(typeof(Grid)).GetComponentInChildren(typeof(CompositeCollider2D));
+            if (colliders[i].gameObject.name == collider.gameObject.name)
+            {
+                flipCandidates[index].SetActive(false);
+                return false;
+            }
+        }
+        return true;
     }
 }
