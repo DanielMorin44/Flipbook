@@ -96,6 +96,7 @@ public class PlayerController : MonoBehaviour
 
     // Objects
     private Rigidbody2D rb2d;
+    public BoxCollider2D box;
     LayerMask terrain;
 
     // Start is called before the first frame update
@@ -119,7 +120,7 @@ public class PlayerController : MonoBehaviour
         {
             canJump = true;
         }
-        wallSliding = (isFrontTouchingWall && inAir && (horizontalMove != 0));
+        wallSliding = (isFrontTouchingWall && inAir);// && (horizontalMove != 0));
 
         // Tick down movement lock time
         if (moveLockedTime > 0f)
@@ -131,11 +132,6 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         float speed;
-        if ((horizontalMove > 0f && !isFacingRight) ||
-            horizontalMove < 0f && isFacingRight)
-        {
-            ReverseFacing();
-        }
         if (shouldReset)
         {
             ResetPlayer();
@@ -162,6 +158,11 @@ public class PlayerController : MonoBehaviour
         }
 
         if (IsPlayerLocked()) return;
+        if ((horizontalMove > 0f && !isFacingRight) ||
+            horizontalMove < 0f && isFacingRight)
+        {
+            ReverseFacing();
+        }
         if (!inAir)
         {
             speed = groundHorizontalSpeed;
@@ -227,6 +228,7 @@ public class PlayerController : MonoBehaviour
     private void SetWallJumpToFalse()
     {
         wallJumping = false;
+        ReverseFacing();
     }
 
     public void Kill()
@@ -252,9 +254,20 @@ public class PlayerController : MonoBehaviour
 
     private void DoTerrainChecks()
     {
+        float facing = -1;
+        if (isFacingRight) facing = 1;
         // Check Contact points for touching terrain
-        inAir = !Physics2D.OverlapBox(bottomCheck.position, new Vector2( GetComponent<Collider2D>().bounds.size.x * .9f, checkWidth), 0, terrain);
-        isFrontTouchingWall = Physics2D.OverlapBox(frontCheck.position, new Vector2(checkWidth, GetComponent<Collider2D>().bounds.size.y * .9f), 0, terrain);
+        inAir = !Physics2D.OverlapBox(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2( box.bounds.size.x * .8f, checkWidth), 0, terrain);
+        isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f), 0, terrain);
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        float facing = -1;
+        if (isFacingRight) facing = 1;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2(box.bounds.size.x * .8f, checkWidth));
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f));
+    }
 }

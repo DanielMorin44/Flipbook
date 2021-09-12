@@ -287,6 +287,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: box
+      value: 
+      objectReference: {fileID: 110688605}
+    - target: {fileID: 1898420236, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
       propertyPath: levelManager
       value: 
       objectReference: {fileID: 1393931880}
@@ -366,7 +370,7 @@ GameObject:
   - component: {fileID: 817390262}
   - component: {fileID: 817390261}
   m_Layer: 3
-  m_Name: GridLevel1
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,7 +649,7 @@ GameObject:
   - component: {fileID: 1847221291}
   - component: {fileID: 1847221290}
   m_Layer: 3
-  m_Name: Tilemap0
+  m_Name: Tilemap
   m_TagString: terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
