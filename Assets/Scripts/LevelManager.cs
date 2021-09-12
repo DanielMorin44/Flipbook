@@ -76,4 +76,11 @@ public class LevelManager : MonoBehaviour
         }
         return true;
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(playerCollider.bounds.center, new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * .9f));
+    }
+
 }

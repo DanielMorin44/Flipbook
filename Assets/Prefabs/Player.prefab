@@ -214,8 +214,10 @@ MonoBehaviour:
   wallJumpAngle: 57
   wallJumpTime: 0.05
   moveLockOnWallJump: 0.5
-  checkWidth: 0.1
+  minTimeBetweenJumps: 0.5
+  checkWidth: 0.01
   levelManager: {fileID: 0}
   inputController: {fileID: 0}
   bottomCheck: {fileID: 262408907}
   frontCheck: {fileID: 342533317}
+  box: {fileID: 364658857191716412}

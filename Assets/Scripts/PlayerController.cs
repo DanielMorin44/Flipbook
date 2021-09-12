@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
 
     // Private vars
     // state vars
-    bool canJump, shouldJump;
+    bool canJump, shouldJump, jumping;
     public void SetShouldJump(bool value)
     {
         shouldJump = value;
@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
     }
 
     bool isFacingRight;
+    float facing;
     bool isFrontTouchingWall;
     bool wallSliding;
     bool wallJumping;
@@ -83,11 +84,7 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsPlayerLocked()
     {
-        if (moveLockedTime > 0f)
-        {
-            return true;
-        }
-        return false;
+        return (moveLockedTime > 0f);
     }
     public void SetMoveLockedTime(float value)
     {
@@ -107,6 +104,7 @@ public class PlayerController : MonoBehaviour
         shouldReset = false;
         wallSliding = false;
         isFacingRight = true;
+        facing = 1;
         moveLockedTime = 0f;
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
@@ -122,10 +120,14 @@ public class PlayerController : MonoBehaviour
         }
         wallSliding = (isFrontTouchingWall && inAir);// && (horizontalMove != 0));
 
-        // Tick down movement lock time
+        // Tick down lock times
         if (moveLockedTime > 0f)
         {
             moveLockedTime -= Time.deltaTime;
+            if(moveLockedTime < 0f)
+            {
+                horizontalMove = 0.0f;
+            }
         }
     }
 
@@ -140,6 +142,7 @@ public class PlayerController : MonoBehaviour
         if (shouldJump)
         {
             Jump();
+            return;
         }
         if (shouldFlip)
         {
@@ -147,14 +150,8 @@ public class PlayerController : MonoBehaviour
         }
         if (wallJumping)
         {
-            Vector2 jumpVector = new Vector2(0, 0);
-            jumpVector.y = wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad);
-            jumpVector.x = wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad);
-            if (isFacingRight)
-            {
-                jumpVector.x = -jumpVector.x;
-            }
-            rb2d.velocity = jumpVector;
+            rb2d.velocity = new Vector2( -facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad), 
+                                        wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
         }
 
         if (IsPlayerLocked()) return;
@@ -163,14 +160,7 @@ public class PlayerController : MonoBehaviour
         {
             ReverseFacing();
         }
-        if (!inAir)
-        {
-            speed = groundHorizontalSpeed;
-        }
-        else
-        {
-            speed = inAirHorizontalSpeed;
-        }
+        speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
         if (horizontalMove != 0)
         {
             float xVel = (horizontalMove * speed);
@@ -198,7 +188,7 @@ public class PlayerController : MonoBehaviour
         // If player is on ground, set jump vector normally
         if (!inAir)
         {
-            Vector2 jumpVector = new Vector2(0, 0);
+            Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
             StopVerticalVelocity();
             jumpVector.y = jumpForce;
             rb2d.velocity = jumpVector;
@@ -209,7 +199,6 @@ public class PlayerController : MonoBehaviour
             Invoke("SetWallJumpToFalse", wallJumpTime);
             SetMoveLockedTime(moveLockOnWallJump);
         }
-        //rb2d.AddForce(jumpVector, ForceMode2D.Impulse);
         SetShouldJump(false);
         canJump = false;
     }
@@ -223,6 +212,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
         isFacingRight = !isFacingRight;
+        facing *= -1;
     }
     
     private void SetWallJumpToFalse()
@@ -254,8 +244,6 @@ public class PlayerController : MonoBehaviour
 
     private void DoTerrainChecks()
     {
-        float facing = -1;
-        if (isFacingRight) facing = 1;
         // Check Contact points for touching terrain
         inAir = !Physics2D.OverlapBox(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2( box.bounds.size.x * .8f, checkWidth), 0, terrain);
         isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f), 0, terrain);
@@ -263,8 +251,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        float facing = -1;
-        if (isFacingRight) facing = 1;
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2(box.bounds.size.x * .8f, checkWidth));
         Gizmos.color = Color.red;
