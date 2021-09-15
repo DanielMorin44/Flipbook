@@ -214,7 +214,6 @@ MonoBehaviour:
   wallJumpAngle: 57
   wallJumpTime: 0.05
   moveLockOnWallJump: 0.5
-  minTimeBetweenJumps: 0.5
   checkWidth: 0.01
   levelManager: {fileID: 0}
   inputController: {fileID: 0}
