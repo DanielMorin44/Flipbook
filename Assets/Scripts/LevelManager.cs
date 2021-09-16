@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public GameObject[] flipCandidates;
     public Collider2D playerCollider;
 
-    public int curLevelIndex = 0;
+    public int curPageIndex = 0;
 
 
     // Start is called before the first frame update
@@ -24,7 +24,7 @@ public class LevelManager : MonoBehaviour
             Debug.Log("Out of Bounds Index Selected");
             return false;
         }
-        if(index == curLevelIndex)
+        if(index == curPageIndex)
         {
             Debug.Log("Selected Level same as current");
             return false;
@@ -36,8 +36,8 @@ public class LevelManager : MonoBehaviour
         }
 
         Debug.Log("Level Manager Flipping");
-        flipCandidates[curLevelIndex].SetActive(false);
-        curLevelIndex = index;
+        flipCandidates[curPageIndex].SetActive(false);
+        curPageIndex = index;
         return true;
     }
 
@@ -75,6 +75,26 @@ public class LevelManager : MonoBehaviour
             }
         }
         return true;
+    }
+
+    public int GetTotalPages()
+    {
+        return flipCandidates.Length;
+    }
+
+    public int GetCurrentPage()
+    {
+        return curPageIndex;
+    }
+
+    public void Open(int index)
+    {
+        flipCandidates[index].SetActive(true);
+    }
+
+    public void Close(int index)
+    {
+        flipCandidates[index].SetActive(false);
     }
 
     private void OnDrawGizmosSelected()

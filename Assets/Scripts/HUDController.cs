@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
-    public Text text;
+    public Text flipText;
+    public Text numKeysText;
     public PlayerController player;
 
     // Start is called before the first frame update
@@ -17,7 +18,7 @@ public class HUDController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        text.text = player.GetCanFlip() ? "Can Flip = true" : "Can Flip = false";
+        numKeysText.text = "Num Keys: " + player.GetNumKeys().ToString();
+        flipText.text = player.GetCanFlip() ? "Can Flip = true" : "Can Flip = false";
     }
 }

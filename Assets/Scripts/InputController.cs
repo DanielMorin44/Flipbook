@@ -9,6 +9,8 @@ public class InputController : MonoBehaviour
     public PlayerController player;
     public LevelManager levelManager;
 
+    private int indexCounter;
+
     private enum InputStateTypes
     {
         PlayerControl,
@@ -38,51 +40,24 @@ public class InputController : MonoBehaviour
                 {
                     player.SetShouldJump(true);
                 }
-                if (Input.GetKeyDown("f") && player.GetCanFlip())
+                if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
                 {
+                    indexCounter = levelManager.GetCurrentPage();
+                    Debug.Log("Cur index: " + indexCounter);
                     player.SetShouldFlip(true);
                 }
                 break;
             case InputStateTypes.FlipDecisionPending:
-                if (Input.GetKeyDown("1"))
+                if (Input.GetMouseButtonUp(1))
                 {
-                    CompleteFlip(1);
+                    CompleteFlip(indexCounter);
                 }
-                else if (Input.GetKeyDown("2"))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    CompleteFlip(2);
-                }
-                else if (Input.GetKeyDown("3"))
-                {
-                    CompleteFlip(3);
-                }
-                else if (Input.GetKeyDown("4"))
-                {
-                    CompleteFlip(4);
-                }
-                else if (Input.GetKeyDown("5"))
-                {
-                    CompleteFlip(5);
-                }
-                else if (Input.GetKeyDown("6"))
-                {
-                    CompleteFlip(6);
-                }
-                else if (Input.GetKeyDown("7"))
-                {
-                    CompleteFlip(7);
-                }
-                else if (Input.GetKeyDown("8"))
-                {
-                    CompleteFlip(8);
-                }
-                else if (Input.GetKeyDown("9"))
-                {
-                    CompleteFlip(9);
-                }
-                else if (Input.GetKeyDown("0"))
-                {
-                    CompleteFlip(0);
+                    levelManager.Close(indexCounter);
+                    indexCounter++; indexCounter %= levelManager.GetTotalPages();
+                    Debug.Log("indexCounter:" + indexCounter);
+                    levelManager.Open(indexCounter);
                 }
                 break;
             default:
@@ -108,9 +83,15 @@ public class InputController : MonoBehaviour
 
     private void CompleteFlip(int index)
     {
-        if (levelManager.FlipLevel(index))
+        if( index >= 0) // -1 index means cancel flip
         {
-            player.FlipSuccess();
+            if (levelManager.FlipLevel(index))
+            {
+                player.FlipSuccess();
+            } else
+            {
+                levelManager.Open(levelManager.GetCurrentPage());
+            }
         }
         levelManager.ResumeGame();
         StateChange(InputStateTypes.PlayerControl);

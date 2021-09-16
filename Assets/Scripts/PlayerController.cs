@@ -76,6 +76,9 @@ public class PlayerController : MonoBehaviour
     bool wallJumping;
     bool inAir;
 
+    // Private Collection vars
+    private int numKeys;
+
     // Time Vars
     float moveLockedTime;
     public float GetMoveLockedTime()
@@ -104,6 +107,7 @@ public class PlayerController : MonoBehaviour
         shouldReset = false;
         wallSliding = false;
         isFacingRight = true;
+        numKeys = 0;
         facing = 1;
         moveLockedTime = 0f;
         terrain = LayerMask.GetMask("terrain");
@@ -255,5 +259,25 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawCube(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2(box.bounds.size.x * .8f, checkWidth));
         Gizmos.color = Color.red;
         Gizmos.DrawCube(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f));
+    }
+
+    public bool TryUnlock()
+    {
+        if (numKeys > 0)
+        {
+            numKeys--;
+            return true;
+        }
+        return false;
+    }
+
+    public void AddKey(int value)
+    {
+        numKeys += value;
+    }
+
+    public int GetNumKeys()
+    {
+        return numKeys;
     }
 }
