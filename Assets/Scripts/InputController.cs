@@ -7,6 +7,7 @@ using UnityEngine;
 public class InputController : MonoBehaviour
 {
     public PlayerController player;
+    public CameraController cam;
     public LevelManager levelManager;
 
     private int indexCounter;
@@ -14,7 +15,8 @@ public class InputController : MonoBehaviour
     private enum InputStateTypes
     {
         PlayerControl,
-        FlipDecisionPending
+        FlipDecisionPending,
+        CameraPan
     }
     private InputStateTypes inputState;
 
@@ -33,6 +35,12 @@ public class InputController : MonoBehaviour
                 if (Input.GetKeyDown("r"))
                 {
                     player.SetShouldReset(true);
+                }
+                if (Input.GetKeyDown("l"))
+                {
+                    EnterPanMode();
+                    StateChange(InputStateTypes.CameraPan);
+                    break;
                 }
                 player.SetHorizontalMove(Input.GetAxis("Horizontal"));
                 // We should jump if user is pressing jump button and the player is allowed to jump
@@ -60,19 +68,38 @@ public class InputController : MonoBehaviour
                     levelManager.Open(indexCounter);
                 }
                 break;
+            case InputStateTypes.CameraPan:
+                if (Input.GetKeyDown("l"))
+                {
+                    ExitPanMode();
+                    StateChange(InputStateTypes.PlayerControl);
+                    break;
+                }
+                cam.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
+                cam.SetVerticalMove(Input.GetAxisRaw("Vertical"));
+                break;
             default:
                 break;
         }
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
-
     private void StateChange(InputStateTypes newState)
     {
         inputState = newState;
+    }
+
+    private void EnterPanMode()
+    {
+        levelManager.PauseGame();
+        cam.SetPanMode(true);
+    }
+
+    private void ExitPanMode()
+    {
+        cam.SetPanMode(false);
+        cam.SetHorizontalMove(0);
+        cam.SetVerticalMove(0);
+        levelManager.ResumeGame();
     }
 
     public void InitiateFlip()
