@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class BoundsController : MonoBehaviour
 {
-    public PlayerController player;
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         // If player touches token
         if (collision.tag == "Player")
         {
+            PlayerController player = collision.GetComponent<PlayerController>();
             //Reset Scene
             player.Kill();
         }

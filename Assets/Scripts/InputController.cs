@@ -9,6 +9,7 @@ public class InputController : MonoBehaviour
     public PlayerController player;
     public CameraController cam;
     public LevelManager levelManager;
+    public HUDController hud;
 
     private int indexCounter;
 
@@ -16,9 +17,11 @@ public class InputController : MonoBehaviour
     {
         PlayerControl,
         FlipDecisionPending,
-        CameraPan
+        CameraPan,
+        Menu
     }
     private InputStateTypes inputState;
+    private InputStateTypes returnStateAfterPause;
 
     // Start is called before the first frame update
     void Start()
@@ -32,54 +35,102 @@ public class InputController : MonoBehaviour
         switch (inputState)
         {
             case InputStateTypes.PlayerControl:
-                if (Input.GetKeyDown("r"))
-                {
-                    player.SetShouldReset(true);
-                }
-                if (Input.GetKeyDown("l"))
-                {
-                    EnterPanMode();
-                    StateChange(InputStateTypes.CameraPan);
-                    break;
-                }
-                player.SetHorizontalMove(Input.GetAxis("Horizontal"));
-                // We should jump if user is pressing jump button and the player is allowed to jump
-                if((Input.GetKeyDown("space")) && player.GetCanJump() && ! player.GetShouldJump())
-                {
-                    player.SetShouldJump(true);
-                }
-                if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
-                {
-                    indexCounter = levelManager.GetCurrentPage();
-                    Debug.Log("Cur index: " + indexCounter);
-                    player.SetShouldFlip(true);
-                }
+                HandlePlayerControlInput();
                 break;
             case InputStateTypes.FlipDecisionPending:
-                if (Input.GetMouseButtonUp(1))
-                {
-                    CompleteFlip(indexCounter);
-                }
-                if (Input.GetMouseButtonDown(0))
-                {
-                    levelManager.Close(indexCounter);
-                    indexCounter++; indexCounter %= levelManager.GetTotalPages();
-                    Debug.Log("indexCounter:" + indexCounter);
-                    levelManager.Open(indexCounter);
-                }
+                HandleFlipDecisionPendingInput();
                 break;
             case InputStateTypes.CameraPan:
-                if (Input.GetKeyDown("l"))
-                {
-                    ExitPanMode();
-                    StateChange(InputStateTypes.PlayerControl);
-                    break;
-                }
-                cam.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
-                cam.SetVerticalMove(Input.GetAxisRaw("Vertical"));
+                HandleCameraPanInput();
+                break;
+            case InputStateTypes.Menu:
+                HandleMenuInput();
                 break;
             default:
                 break;
+        }
+    }
+
+    private void HandlePlayerControlInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StateChange(InputStateTypes.Menu);
+            returnStateAfterPause = InputStateTypes.PlayerControl;
+            levelManager.PauseGame();
+            hud.SetMenuActive(true);
+            return;
+        }
+        if (Input.GetKeyDown("r"))
+        {
+            player.SetShouldReset(true);
+        }
+        if (Input.GetKeyDown("l"))
+        {
+            EnterPanMode();
+            StateChange(InputStateTypes.CameraPan);
+            return;
+        }
+        player.SetHorizontalMove(Input.GetAxis("Horizontal"));
+        // We should jump if user is pressing jump button and the player is allowed to jump
+        if ((Input.GetKeyDown("space")) && player.GetCanJump() && !player.GetShouldJump())
+        {
+            player.SetShouldJump(true);
+        }
+        if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
+        {
+            indexCounter = levelManager.GetCurrentPage();
+            Debug.Log("Cur index: " + indexCounter);
+            player.SetShouldFlip(true);
+        }
+    }
+
+    private void HandleFlipDecisionPendingInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StateChange(InputStateTypes.Menu);
+            returnStateAfterPause = InputStateTypes.FlipDecisionPending;
+            hud.SetMenuActive(true);
+            return;
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            CompleteFlip(indexCounter);
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            levelManager.Close(indexCounter);
+            indexCounter++; indexCounter %= levelManager.GetTotalPages();
+            Debug.Log("indexCounter:" + indexCounter);
+            levelManager.Open(indexCounter);
+        }
+    }
+    
+    private void HandleCameraPanInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StateChange(InputStateTypes.Menu);
+            returnStateAfterPause = InputStateTypes.CameraPan;
+            hud.SetMenuActive(true);
+            return;
+        }
+        if (Input.GetKeyDown("l"))
+        {
+            ExitPanMode();
+            StateChange(InputStateTypes.PlayerControl);
+            return;
+        }
+        cam.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
+        cam.SetVerticalMove(Input.GetAxisRaw("Vertical"));
+    }
+
+    private void HandleMenuInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            LeaveMenuState();
         }
     }
 
@@ -106,6 +157,17 @@ public class InputController : MonoBehaviour
     {
         levelManager.PauseGame();
         StateChange(InputStateTypes.FlipDecisionPending);
+    }
+
+    public void LeaveMenuState()
+    {
+        StateChange(returnStateAfterPause);
+        if (returnStateAfterPause != InputStateTypes.CameraPan &&
+            returnStateAfterPause != InputStateTypes.FlipDecisionPending)
+        {
+            levelManager.ResumeGame();
+        }
+        hud.SetMenuActive(false);
     }
 
     private void CompleteFlip(int index)

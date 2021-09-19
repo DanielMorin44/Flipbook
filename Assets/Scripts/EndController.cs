@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class EndController : MonoBehaviour
 {
-    public PlayerController player;
     public string nextScene;
     public bool locked;
 
@@ -14,6 +13,7 @@ public class EndController : MonoBehaviour
         // If player touches token
         if (collision.tag == "Player")
         {
+            PlayerController player = collision.GetComponent<PlayerController>();
             if (locked)
             {
                 locked = !player.TryUnlock(); // If unlock successful, switch this to not locked
