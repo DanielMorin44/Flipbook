@@ -9,7 +9,7 @@ public class InputController : MonoBehaviour
     public PlayerController player;
     public CameraController cam;
     public LevelManager levelManager;
-    public HUDController hud;
+    public GUIController gui;
 
     private int indexCounter;
 
@@ -58,7 +58,7 @@ public class InputController : MonoBehaviour
             StateChange(InputStateTypes.Menu);
             returnStateAfterPause = InputStateTypes.PlayerControl;
             levelManager.PauseGame();
-            hud.SetMenuActive(true);
+            gui.SetMenuActive(true);
             return;
         }
         if (Input.GetKeyDown("r"))
@@ -91,7 +91,7 @@ public class InputController : MonoBehaviour
         {
             StateChange(InputStateTypes.Menu);
             returnStateAfterPause = InputStateTypes.FlipDecisionPending;
-            hud.SetMenuActive(true);
+            gui.SetMenuActive(true);
             return;
         }
         if (Input.GetMouseButtonUp(1))
@@ -113,7 +113,7 @@ public class InputController : MonoBehaviour
         {
             StateChange(InputStateTypes.Menu);
             returnStateAfterPause = InputStateTypes.CameraPan;
-            hud.SetMenuActive(true);
+            gui.SetMenuActive(true);
             return;
         }
         if (Input.GetKeyDown("l"))
@@ -167,7 +167,7 @@ public class InputController : MonoBehaviour
         {
             levelManager.ResumeGame();
         }
-        hud.SetMenuActive(false);
+        gui.SetMenuActive(false);
     }
 
     private void CompleteFlip(int index)
