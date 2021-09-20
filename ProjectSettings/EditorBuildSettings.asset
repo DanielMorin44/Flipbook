@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Page3.unity
     guid: 50fefc3dcb2cf60469c348a6c852c467
+  - enabled: 1
+    path: Assets/Scenes/WelcomeScreen.unity
+    guid: d43c0f1713820ec48be60955be4ee176
   m_configObjects: {}
