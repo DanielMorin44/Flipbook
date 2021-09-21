@@ -34,8 +34,6 @@ public class LevelManager : MonoBehaviour
             Debug.Log("Terrain in the way!");
             return false;
         }
-
-        Debug.Log("Level Manager Flipping");
         flipCandidates[curPageIndex].SetActive(false);
         curPageIndex = index;
         return true;

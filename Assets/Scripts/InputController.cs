@@ -80,7 +80,6 @@ public class InputController : MonoBehaviour
         if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
         {
             indexCounter = levelManager.GetCurrentPage();
-            Debug.Log("Cur index: " + indexCounter);
             player.SetShouldFlip(true);
         }
     }
@@ -102,7 +101,6 @@ public class InputController : MonoBehaviour
         {
             levelManager.Close(indexCounter);
             indexCounter++; indexCounter %= levelManager.GetTotalPages();
-            Debug.Log("indexCounter:" + indexCounter);
             levelManager.Open(indexCounter);
         }
     }

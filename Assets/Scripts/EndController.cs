@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class EndController : MonoBehaviour
 {
     public string nextScene;
+    public int thisLevel;
     public bool locked;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -21,7 +22,10 @@ public class EndController : MonoBehaviour
             // End the stage
             if (!locked)
             {
-                Debug.Log("Stage Complete");
+                if (thisLevel > PlayerData.highestLevel)
+                {
+                    PlayerData.highestLevel = thisLevel;
+                }
                 SceneManager.LoadScene(nextScene);
             }
         }

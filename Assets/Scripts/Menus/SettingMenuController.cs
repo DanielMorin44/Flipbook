@@ -15,7 +15,6 @@ public class SettingMenuController : MonoBehaviour
 
     public void ReturnPressed()
     {
-        //Debug.Log("Settings Not Implemented");
         mainMenu.SendToWelcome();
     }
 }

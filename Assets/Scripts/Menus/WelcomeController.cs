@@ -15,17 +15,18 @@ public class WelcomeController : MonoBehaviour
 
     public void NewGamePressed()
     {
-        SceneManager.LoadScene("Page0");
+        PlayerData.highestLevel = 0;
+        SceneManager.LoadScene("Page1");
     }
 
     public void LoadPressed()
     {
-        Debug.Log("Load Not Implemented");
+        SaveSystem.LoadData();
+        SceneManager.LoadScene("Overworld");
     }
 
     public void SettingsPressed()
     {
-        //Debug.Log("Settings Not Implemented");
         mainMenu.SendToSettings();
     }
 

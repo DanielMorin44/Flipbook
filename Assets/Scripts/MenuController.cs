@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
@@ -26,12 +27,14 @@ public class MenuController : MonoBehaviour
 
     public void ReturnToMenuPressed()
     {
-        Debug.Log("Return To Menu Not Implemented");
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Overworld");
     }
 
     public void SavePressed()
     {
-        Debug.Log("Save Not Implemented");
+        SaveSystem.SaveData();
+        Debug.Log("Game Saved!");
     }
 
     public void QuitPressed()
