@@ -8,12 +8,17 @@ public class EndController : MonoBehaviour
     public string nextScene;
     public int thisLevel;
     public bool locked;
+    public InputController inputController;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If player touches token
         if (collision.tag == "Player")
         {
+            if (!inputController.IsPlayerControl())
+            {
+                return;
+            }
             PlayerController player = collision.GetComponent<PlayerController>();
             if (locked)
             {

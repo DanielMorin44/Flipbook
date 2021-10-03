@@ -15,7 +15,6 @@ public class WelcomeController : MonoBehaviour
 
     public void NewGamePressed()
     {
-        PlayerData.highestLevel = 0;
         SceneManager.LoadScene("Page1");
     }
 

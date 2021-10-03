@@ -371,10 +371,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 990730272, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: levelManager
+      value: 
+      objectReference: {fileID: 16496265}
+    - target: {fileID: 990730272, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: inputController
+      value: 
+      objectReference: {fileID: 862700116}
+    - target: {fileID: 1120085077003714315, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041125012555949260, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: m_Name
+      value: SettingsButton
+      objectReference: {fileID: 0}
     - target: {fileID: 3492244293271278934, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1898420236}
+    - target: {fileID: 7765726220046859281, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: m_Text
+      value: Settings
+      objectReference: {fileID: 0}
     - target: {fileID: 8255620911392340602, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: m_Name
       value: Overlay
@@ -2176,6 +2196,10 @@ PrefabInstance:
       propertyPath: thisLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
+      propertyPath: inputController
+      value: 
+      objectReference: {fileID: 862700116}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
 --- !u!4 &7675239716239366361 stripped

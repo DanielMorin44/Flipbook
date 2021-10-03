@@ -95,6 +95,11 @@ public class LevelManager : MonoBehaviour
         flipCandidates[index].SetActive(false);
     }
 
+    public int GetNumberPagesAvailable()
+    {
+        return flipCandidates.Length;
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

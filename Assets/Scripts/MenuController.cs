@@ -7,6 +7,7 @@ public class MenuController : MonoBehaviour
 {
 
     InputController input;
+    public GUIController gui;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,11 @@ public class MenuController : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene("Overworld");
+    }
+
+    public void SettingsPressed()
+    {
+        gui.SetSettingsActive(true);
     }
 
     public void SavePressed()

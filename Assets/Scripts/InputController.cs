@@ -80,6 +80,10 @@ public class InputController : MonoBehaviour
         if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
         {
             indexCounter = levelManager.GetCurrentPage();
+            if (PlayerData.selectionType == PlayerData.SelectionType.Radial)
+            {
+                gui.OpenSelector();
+            }
             player.SetShouldFlip(true);
         }
     }
@@ -95,13 +99,23 @@ public class InputController : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(1))
         {
-            CompleteFlip(indexCounter);
+            if (PlayerData.selectionType == PlayerData.SelectionType.Radial)
+            {
+                gui.CloseSelector();
+            }
+            if (PlayerData.selectionType == PlayerData.SelectionType.Sequential)
+            {
+                CompleteFlip(indexCounter);
+            }
         }
         if (Input.GetMouseButtonDown(0))
         {
-            levelManager.Close(indexCounter);
-            indexCounter++; indexCounter %= levelManager.GetTotalPages();
-            levelManager.Open(indexCounter);
+            if (PlayerData.selectionType == PlayerData.SelectionType.Sequential)
+            {
+                levelManager.Close(indexCounter);
+                indexCounter++; indexCounter %= levelManager.GetTotalPages();
+                levelManager.Open(indexCounter);
+            }
         }
     }
     
@@ -168,7 +182,7 @@ public class InputController : MonoBehaviour
         gui.SetMenuActive(false);
     }
 
-    private void CompleteFlip(int index)
+    public void CompleteFlip(int index)
     {
         if( index >= 0) // -1 index means cancel flip
         {
@@ -182,5 +196,10 @@ public class InputController : MonoBehaviour
         }
         levelManager.ResumeGame();
         StateChange(InputStateTypes.PlayerControl);
+    }
+
+    public bool IsPlayerControl()
+    {
+        return inputState == InputStateTypes.PlayerControl;
     }
 }

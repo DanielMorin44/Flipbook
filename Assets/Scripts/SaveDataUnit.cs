@@ -6,9 +6,14 @@ using UnityEngine;
 public class SaveDataUnit
 {
     public int highestLevel;
+    public PlayerData.SelectionType selectionType;
 
     public SaveDataUnit()
     {
+        // Settings
+        selectionType = PlayerData.selectionType;
+
+        // Progression
         highestLevel = PlayerData.highestLevel;
     }
 }

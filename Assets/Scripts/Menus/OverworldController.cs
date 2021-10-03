@@ -92,5 +92,10 @@ public class OverworldController : MonoBehaviour
     {
         SceneManager.LoadScene("WelcomeScreen");
     }
+   
+    public void QuitPressed()
+    {
+        Application.Quit();
+    }
     #endregion
 }

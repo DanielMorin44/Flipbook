@@ -4525,6 +4525,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 990730272, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: levelManager
+      value: 
+      objectReference: {fileID: 1393931880}
+    - target: {fileID: 990730272, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
+      propertyPath: inputController
+      value: 
+      objectReference: {fileID: 1412604870570253855}
     - target: {fileID: 3492244293271278934, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: player
       value: 
@@ -5012,6 +5020,10 @@ PrefabInstance:
       value: End
       objectReference: {fileID: 0}
     - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
+      propertyPath: locked
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 0}
@@ -5023,5 +5035,9 @@ PrefabInstance:
       propertyPath: thisLevel
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7675239715755028663, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
+      propertyPath: inputController
+      value: 
+      objectReference: {fileID: 1412604870570253855}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 290b2b60c46529e4485fb9b4c8217c10, type: 3}
