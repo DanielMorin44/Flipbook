@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float groundHorizontalSpeed;
     public float inAirHorizontalSpeed;
     public float wallSlidingSpeed;
+    public float stickAmnt;
 
     // Forces
     public float jumpForce;
@@ -122,11 +123,15 @@ public class PlayerController : MonoBehaviour
         {
             canJump = true;
         }
-        wallSliding = (isFrontTouchingWall && inAir);// && (horizontalMove != 0));
+        wallSliding = (isFrontTouchingWall && inAir);
 
         // Tick down lock times
         if (moveLockedTime > 0f)
         {
+            if (wallSliding && moveLockedTime < (moveLockOnWallJump - .1))
+            {
+                moveLockedTime = 0.0f;
+            }
             moveLockedTime -= Time.deltaTime;
             if(moveLockedTime < 0f)
             {
@@ -157,7 +162,10 @@ public class PlayerController : MonoBehaviour
             rb2d.velocity = new Vector2( -facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad), 
                                         wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
         }
-
+        if (!inAir && horizontalMove == 0)
+        {
+            rb2d.velocity = new Vector2(rb2d.velocity.x * (1- stickAmnt), rb2d.velocity.y);
+        }
         if (IsPlayerLocked()) return;
         if ((horizontalMove > 0f && !isFacingRight) ||
             horizontalMove < 0f && isFacingRight)

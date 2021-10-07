@@ -71,7 +71,7 @@ public class InputController : MonoBehaviour
             StateChange(InputStateTypes.CameraPan);
             return;
         }
-        player.SetHorizontalMove(Input.GetAxis("Horizontal"));
+        player.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
         // We should jump if user is pressing jump button and the player is allowed to jump
         if ((Input.GetKeyDown("space")) && player.GetCanJump() && !player.GetShouldJump())
         {

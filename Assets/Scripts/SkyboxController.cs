@@ -20,7 +20,7 @@ public class SkyboxController : MonoBehaviour
         y = mainCamera.transform.position.y;
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         transform.position = new Vector3(x, y, z);
     }
