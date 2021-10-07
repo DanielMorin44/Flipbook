@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 559436929189114032}
   - component: {fileID: 364658857191716412}
   - component: {fileID: 1898420236}
+  - component: {fileID: 1312042810}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -89,7 +90,7 @@ Transform:
   m_GameObject: {fileID: 559436929189113997}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.45, y: -0.24, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 2.8, y: 2.8, z: 1}
   m_Children:
   - {fileID: 262408907}
   - {fileID: 342533317}
@@ -162,7 +163,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -181,7 +182,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.010074131, y: -0.06951041}
+  m_Offset: {x: -0.0011802297, y: -0.018881582}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -192,7 +193,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.14866845, y: 0.18097918}
+  m_Size: {x: 0.1102238, y: 0.046979986}
   m_EdgeRadius: 0
 --- !u!114 &1898420236
 MonoBehaviour:
@@ -206,17 +207,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 242f1310927788045b272d273bda7762, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundHorizontalSpeed: 5
-  inAirHorizontalSpeed: 3.5
+  groundHorizontalSpeed: 4.5
+  inAirHorizontalSpeed: 4
   wallSlidingSpeed: 0.5
-  jumpForce: 5
-  wallJumpForce: 5
-  wallJumpAngle: 57
+  jumpForce: 8.6
+  wallJumpForce: 7
+  wallJumpAngle: 65
+  maxSlopeAngle: 45
+  noFriction: {fileID: 6200000, guid: b9b9dda680111f14fa2c3843dc4f0de1, type: 2}
+  fullFriction: {fileID: 6200000, guid: b0bd22f04d823ec41be2be22d2e0908a, type: 2}
   wallJumpTime: 0.05
   moveLockOnWallJump: 0.5
   checkWidth: 0.01
+  slopeCheckDistance: 0.5
   levelManager: {fileID: 0}
   inputController: {fileID: 0}
-  bottomCheck: {fileID: 262408907}
-  frontCheck: {fileID: 342533317}
-  box: {fileID: 364658857191716412}
+--- !u!58 &1312042810
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559436929189113997}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.1}
+  serializedVersion: 2
+  m_Radius: 0.05774978

@@ -9,12 +9,16 @@ public class PlayerController : MonoBehaviour
     public float groundHorizontalSpeed;
     public float inAirHorizontalSpeed;
     public float wallSlidingSpeed;
-    public float stickAmnt;
 
     // Forces
     public float jumpForce;
     public float wallJumpForce;
     public float wallJumpAngle;
+    public float maxSlopeAngle;
+
+    // Physics Materials
+    public PhysicsMaterial2D noFriction;
+    public PhysicsMaterial2D fullFriction;
 
     // Times
     public float wallJumpTime;
@@ -22,12 +26,11 @@ public class PlayerController : MonoBehaviour
 
     // Sizes
     public float checkWidth;
+    public float slopeCheckDistance;
 
     // Objects
     public LevelManager levelManager;
     public InputController inputController;
-    public Transform bottomCheck;
-    public Transform frontCheck;
 
     // Private vars
     // state vars
@@ -80,6 +83,16 @@ public class PlayerController : MonoBehaviour
     // Private Collection vars
     private int numKeys;
 
+    // Private slope vars
+    private float slopeDownAngle;
+    private float slopeDownAngleOld;
+    private float slopeSideAngle;
+    private Vector2 slopeNormalPerp;
+    private bool isOnSlope;
+    private bool canWalkOnSlope;
+    private bool sliding;
+    private float wallAngle = 87;
+
     // Time Vars
     float moveLockedTime;
     public float GetMoveLockedTime()
@@ -97,8 +110,8 @@ public class PlayerController : MonoBehaviour
 
     // Objects
     private Rigidbody2D rb2d;
-    public BoxCollider2D box;
-    LayerMask terrain;
+    private CircleCollider2D circle;
+    private LayerMask terrain;
 
     // Start is called before the first frame update
     void Start()
@@ -113,17 +126,20 @@ public class PlayerController : MonoBehaviour
         moveLockedTime = 0f;
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
+        circle = GetComponent<CircleCollider2D>();
     }
 
     // Update is called once per frame
+    #region update functions
     void Update()
     {
         DoTerrainChecks();
-        if (!inAir || isFrontTouchingWall)
+        DoSlopeCheck();
+        if (!sliding && (!inAir || isFrontTouchingWall))
         {
             canJump = true;
         }
-        wallSliding = (isFrontTouchingWall && inAir);
+        wallSliding = (isFrontTouchingWall && inAir && !sliding);
 
         // Tick down lock times
         if (moveLockedTime > 0f)
@@ -142,7 +158,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float speed;
         if (shouldReset)
         {
             ResetPlayer();
@@ -162,18 +177,83 @@ public class PlayerController : MonoBehaviour
             rb2d.velocity = new Vector2( -facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad), 
                                         wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
         }
-        if (!inAir && horizontalMove == 0)
+        DoMovement();
+    }
+
+    private void DoTerrainChecks()
+    {
+        // Check Contact points for touching terrain
+        inAir = !Physics2D.OverlapBox(new Vector2(circle.bounds.center.x, circle.bounds.min.y), new Vector2(circle.bounds.size.x * .8f, checkWidth), 0, terrain);
+        sliding = (slopeSideAngle > maxSlopeAngle);
+        isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f), 0, terrain);
+    }
+
+    private void DoSlopeCheck()
+    {
+        // Todo: figure out why there is this magic value and remove
+        Vector2 checkpos = transform.position - new Vector3(0.0f, circle.radius + .35f);
+        HorizontalSlopeCheck(checkpos);
+        VerticalSlopeCheck(checkpos);
+    }
+
+    private void HorizontalSlopeCheck(Vector2 checkpos)
+    {
+        RaycastHit2D slopeHitFront = Physics2D.Raycast(checkpos, transform.right, slopeCheckDistance, terrain);
+        RaycastHit2D slopeHitBack = Physics2D.Raycast(checkpos, -transform.right, slopeCheckDistance, terrain);
+        if (slopeHitFront)
         {
-            rb2d.velocity = new Vector2(rb2d.velocity.x * (1- stickAmnt), rb2d.velocity.y);
+            if (Vector2.Angle(slopeHitFront.normal, Vector2.up) < wallAngle)
+            {
+                slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
+                isOnSlope = true;
+            }
+        } else  if (slopeHitBack)
+        {
+            if (Vector2.Angle(slopeHitBack.normal, Vector2.up) < wallAngle)
+            {
+                slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
+                isOnSlope = true;
+            }
+        } else
+        {
+            slopeSideAngle = 0.0f;
+            isOnSlope = false;
         }
+    }
+
+    private void VerticalSlopeCheck(Vector2 checkpos)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(checkpos, Vector2.down, slopeCheckDistance, terrain);
+
+        if (hit)
+        {
+            slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
+            slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
+            if(slopeDownAngle != slopeDownAngleOld)
+            {
+                isOnSlope = true;
+            }
+            slopeDownAngleOld = slopeDownAngle;
+            Debug.DrawRay(hit.point, hit.normal, Color.green);
+            Debug.DrawRay(hit.point, slopeNormalPerp, Color.red);
+        }
+        canWalkOnSlope = (!(slopeDownAngle > maxSlopeAngle) && !(slopeSideAngle > maxSlopeAngle));
+        rb2d.sharedMaterial = (isOnSlope && horizontalMove == 0.0f && canWalkOnSlope) ? fullFriction : noFriction;
+    }
+    #endregion
+
+    #region movement functions
+
+    private void DoMovement()
+    {
         if (IsPlayerLocked()) return;
         if ((horizontalMove > 0f && !isFacingRight) ||
             horizontalMove < 0f && isFacingRight)
         {
             ReverseFacing();
         }
-        speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
-        if (horizontalMove != 0)
+        float speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
+        if (inAir)
         {
             float xVel = (horizontalMove * speed);
             float yVel = rb2d.velocity.y;
@@ -182,26 +262,32 @@ public class PlayerController : MonoBehaviour
                 xVel = 0;
                 yVel = Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue);
             }
+
             rb2d.velocity = new Vector2(xVel, yVel);
         }
-    }
-
-    private void Flip()
-    {
-        shouldFlip = false;
-        // CanFlip = true if flip failed
-        inputController.InitiateFlip();
+        else if (isOnSlope && canWalkOnSlope)
+        {
+            float xVel = ( slopeNormalPerp.x * -horizontalMove * speed);
+            float yVel = ( slopeNormalPerp.y * -horizontalMove * speed);
+            rb2d.velocity = new Vector2(xVel, yVel);
+        }
+        else if (!isOnSlope)
+        {
+           float xVel = (horizontalMove * speed);
+           float yVel = 0.0f;
+           rb2d.velocity = new Vector2(xVel, yVel);
+        }
     }
 
     private void Jump()
     {
         if (IsPlayerLocked()) return;
         //Cancel Player's Current Vertical velocity
+        StopVerticalVelocity();
         // If player is on ground, set jump vector normally
         if (!inAir)
         {
             Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
-            StopVerticalVelocity();
             jumpVector.y = jumpForce;
             rb2d.velocity = jumpVector;
         }
@@ -215,9 +301,14 @@ public class PlayerController : MonoBehaviour
         canJump = false;
     }
 
-    public void FlipSuccess()
+    private void StopVerticalVelocity()
     {
-        canFlip = false;
+        rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
+    }
+
+    private void StopHorizontalVelocity()
+    {
+        rb2d.velocity = new Vector2(0, rb2d.velocity.y);
     }
 
     private void ReverseFacing()
@@ -232,6 +323,19 @@ public class PlayerController : MonoBehaviour
         wallJumping = false;
         ReverseFacing();
     }
+    #endregion
+
+    private void Flip()
+    {
+        shouldFlip = false;
+        // CanFlip = true if flip failed
+        inputController.InitiateFlip();
+    }
+
+    public void FlipSuccess()
+    {
+        canFlip = false;
+    }
 
     public void Kill()
     {
@@ -244,29 +348,15 @@ public class PlayerController : MonoBehaviour
         Kill();
     }
 
-    private void StopVerticalVelocity()
-    {
-        rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
-    }
-
-    private void StopHorizontalVelocity()
-    {
-        rb2d.velocity = new Vector2(0, rb2d.velocity.y);
-    }
-
-    private void DoTerrainChecks()
-    {
-        // Check Contact points for touching terrain
-        inAir = !Physics2D.OverlapBox(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2( box.bounds.size.x * .8f, checkWidth), 0, terrain);
-        isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f), 0, terrain);
-    }
-
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(new Vector2(box.bounds.center.x, box.bounds.min.y), new Vector2(box.bounds.size.x * .8f, checkWidth));
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(new Vector2(box.bounds.center.x + (box.bounds.extents.x * facing), box.bounds.center.y), new Vector2(checkWidth, box.bounds.size.y * .8f));
+        if (circle)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawCube(new Vector2(circle.bounds.center.x, circle.bounds.min.y), new Vector2(circle.bounds.size.x * .8f, checkWidth));
+            Gizmos.color = Color.red;
+            Gizmos.DrawCube(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f));
+        }
     }
 
     public bool TryUnlock()
