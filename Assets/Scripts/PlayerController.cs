@@ -135,10 +135,11 @@ public class PlayerController : MonoBehaviour
     {
         DoTerrainChecks();
         DoSlopeCheck();
-        if (!sliding && (!inAir || isFrontTouchingWall))
+        if (!inAir || isFrontTouchingWall)
         {
             canJump = true;
         }
+        if (sliding) canJump = false;
         wallSliding = (isFrontTouchingWall && inAir && !sliding);
 
         // Tick down lock times
