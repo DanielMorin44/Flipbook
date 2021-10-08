@@ -10,6 +10,8 @@ public class InputController : MonoBehaviour
     public CameraController cam;
     public LevelManager levelManager;
     public GUIController gui;
+    //TODO: Rip this out
+    public DialogueTrigger dialogue;
 
     private int indexCounter;
 
@@ -61,6 +63,14 @@ public class InputController : MonoBehaviour
             gui.SetMenuActive(true);
             return;
         }
+        //TODO: Rip this out
+        if (Input.GetKeyDown("z"))
+        {
+            gui.DialogueOpen();
+            dialogue.TriggerDialogue();
+        }
+        // End Rip out section
+
         if (Input.GetKeyDown("r"))
         {
             player.SetShouldReset(true);
