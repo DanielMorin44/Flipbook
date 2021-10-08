@@ -29,8 +29,8 @@ public class PlayerController : MonoBehaviour
     public float slopeCheckDistance;
 
     // Objects
-    public LevelManager levelManager;
-    public InputController inputController;
+    private LevelManager levelManager;
+    private InputController inputController;
 
     // Private vars
     // state vars
@@ -127,6 +127,8 @@ public class PlayerController : MonoBehaviour
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
         circle = GetComponent<CircleCollider2D>();
+        inputController = GameObject.FindObjectOfType<InputController>();
+        levelManager = GameObject.FindObjectOfType<LevelManager>();
     }
 
     // Update is called once per frame
@@ -235,8 +237,6 @@ public class PlayerController : MonoBehaviour
                 isOnSlope = true;
             }
             slopeDownAngleOld = slopeDownAngle;
-            Debug.DrawRay(hit.point, hit.normal, Color.green);
-            Debug.DrawRay(hit.point, slopeNormalPerp, Color.red);
         }
         canWalkOnSlope = (!(slopeDownAngle > maxSlopeAngle) && !(slopeSideAngle > maxSlopeAngle));
         rb2d.sharedMaterial = (isOnSlope && horizontalMove == 0.0f && canWalkOnSlope) ? fullFriction : noFriction;

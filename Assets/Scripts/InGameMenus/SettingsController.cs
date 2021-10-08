@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class SettingsController : MonoBehaviour
 {
-    public GUIController gui;
+    public MenuController menu;
 
     public void ReturnPressed()
     {
-        gui.SetSettingsActive(false);
+        menu.SetMainActive();
     }
 }

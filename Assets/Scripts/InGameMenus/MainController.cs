@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuController : MonoBehaviour
+public class MainController : MonoBehaviour
 {
+    public MenuController menu;
 
-    InputController input;
-    public GUIController gui;
-
+    private InputController input;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +33,7 @@ public class MenuController : MonoBehaviour
 
     public void SettingsPressed()
     {
-        gui.SetSettingsActive(true);
+        menu.SetSettingsActive();
     }
 
     public void SavePressed()
