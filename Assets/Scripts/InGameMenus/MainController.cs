@@ -22,7 +22,7 @@ public class MainController : MonoBehaviour
 
     public void ResumePressed()
     {
-        input.LeaveMenuState();
+        input.PauseFinished();
     }
 
     public void ReturnToMenuPressed()

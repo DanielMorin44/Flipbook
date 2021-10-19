@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     // Times
     public float wallJumpTime;
     public float moveLockOnWallJump;
+    public float coyoteTime;
 
     // Sizes
     public float checkWidth;
@@ -34,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     // Private vars
     // state vars
-    bool canJump, shouldJump, jumping;
+    bool canWallJump, canRegularJump, shouldJump, jumping;
     public void SetShouldJump(bool value)
     {
         shouldJump = value;
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour
     }
     public bool GetCanJump()
     {
-        return canJump;
+        return canRegularJump || canWallJump;
     }
 
     bool canFlip, shouldFlip;
@@ -71,6 +72,16 @@ public class PlayerController : MonoBehaviour
     public void SetHorizontalMove(float value)
     {
         horizontalMove = value;
+    }
+
+    bool holdForWallSlide = false;
+    public void SetHoldForWallSlide(bool value)
+    {
+        holdForWallSlide = value;
+    }
+    public void ToggleWallSlide()
+    {
+        holdForWallSlide = !holdForWallSlide;
     }
 
     bool isFacingRight;
@@ -107,6 +118,8 @@ public class PlayerController : MonoBehaviour
     {
         moveLockedTime = value;
     }
+    float coyoteTimeRemaining;
+    bool jumpedSinceLanded = true;
 
     // Objects
     private Rigidbody2D rb2d;
@@ -116,7 +129,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        canJump = false;
+        canWallJump = false;
+        canRegularJump = false;
         canFlip = false;
         shouldReset = false;
         wallSliding = false;
@@ -124,6 +138,7 @@ public class PlayerController : MonoBehaviour
         numKeys = 0;
         facing = 1;
         moveLockedTime = 0f;
+        coyoteTimeRemaining = coyoteTime;
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
         circle = GetComponent<CircleCollider2D>();
@@ -137,17 +152,15 @@ public class PlayerController : MonoBehaviour
     {
         DoTerrainChecks();
         DoSlopeCheck();
-        if (!inAir || isFrontTouchingWall)
-        {
-            canJump = true;
-        }
-        if (sliding) canJump = false;
-        wallSliding = (isFrontTouchingWall && inAir && !sliding);
+        canWallJump = isFrontTouchingWall;
+        canRegularJump = (coyoteTimeRemaining > 0f && !jumpedSinceLanded);
+        if (sliding) { canWallJump = false; canRegularJump = false; }
+        wallSliding = (isFrontTouchingWall && inAir && !sliding && holdForWallSlide);
 
         // Tick down lock times
         if (moveLockedTime > 0f)
         {
-            if (wallSliding && moveLockedTime < (moveLockOnWallJump - .1))
+            if (isFrontTouchingWall && moveLockedTime < (moveLockOnWallJump - .1))
             {
                 moveLockedTime = 0.0f;
             }
@@ -156,6 +169,10 @@ public class PlayerController : MonoBehaviour
             {
                 horizontalMove = 0.0f;
             }
+        }
+        if(coyoteTimeRemaining > 0f && inAir)
+        {
+            coyoteTimeRemaining -= Time.deltaTime;
         }
     }
 
@@ -187,6 +204,11 @@ public class PlayerController : MonoBehaviour
     {
         // Check Contact points for touching terrain
         inAir = !Physics2D.OverlapBox(new Vector2(circle.bounds.center.x, circle.bounds.min.y), new Vector2(circle.bounds.size.x * .8f, checkWidth), 0, terrain);
+        if (!inAir)
+        {
+            jumpedSinceLanded = false;
+            coyoteTimeRemaining = coyoteTime;
+        }
         sliding = (slopeSideAngle > maxSlopeAngle);
         isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f), 0, terrain);
     }
@@ -285,21 +307,30 @@ public class PlayerController : MonoBehaviour
         if (IsPlayerLocked()) return;
         //Cancel Player's Current Vertical velocity
         StopVerticalVelocity();
-        // If player is on ground, set jump vector normally
         if (!inAir)
         {
+            // If player is not wall jumping, set jump vector normally
             Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
             jumpVector.y = jumpForce;
             rb2d.velocity = jumpVector;
+            jumpedSinceLanded = true;
         }
-        else if(wallSliding)
+        else if(canWallJump)
         {
             wallJumping = true;
             Invoke("SetWallJumpToFalse", wallJumpTime);
             SetMoveLockedTime(moveLockOnWallJump);
+        } else
+        { // Player jumped during coyote time
+          // If player is not wall jumping, set jump vector normally
+            Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
+            jumpVector.y = jumpForce;
+            rb2d.velocity = jumpVector;
+            jumpedSinceLanded = true;
         }
         SetShouldJump(false);
-        canJump = false;
+        canWallJump = false;
+        canRegularJump = false;
     }
 
     private void StopVerticalVelocity()

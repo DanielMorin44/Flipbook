@@ -6,6 +6,7 @@ public class GUIController : MonoBehaviour
 {
     public HUDController hud;
     public MenuController menu;
+    public InputController input;
     public GameObject radialSelector;
     public GameObject dialog;
 
@@ -35,6 +36,7 @@ public class GUIController : MonoBehaviour
     public void DialogueClose()
     {
         dialog.SetActive(false);
+        input.DialogueComplete();
     }
 
     public void OpenSelector()

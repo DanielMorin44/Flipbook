@@ -15,6 +15,7 @@ public static class PlayerData
 
     // Settings
     public static SelectionType selectionType = SelectionType.Radial;
+    public static bool wallSlideToggle = false;
 
     // Progression
     public static int highestLevel = 0;

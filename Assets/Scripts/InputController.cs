@@ -20,7 +20,8 @@ public class InputController : MonoBehaviour
         PlayerControl,
         FlipDecisionPending,
         CameraPan,
-        Menu
+        Menu,
+        Dialogue
     }
     private InputStateTypes inputState;
     private InputStateTypes returnStateAfterPause;
@@ -48,6 +49,9 @@ public class InputController : MonoBehaviour
             case InputStateTypes.Menu:
                 HandleMenuInput();
                 break;
+            case InputStateTypes.Dialogue:
+                HandleDialogueInput();
+                break;
             default:
                 break;
         }
@@ -58,16 +62,12 @@ public class InputController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             StateChange(InputStateTypes.Menu);
-            returnStateAfterPause = InputStateTypes.PlayerControl;
-            levelManager.PauseGame();
-            gui.SetMenuActive(true);
             return;
         }
         //TODO: Rip this out
         if (Input.GetKeyDown("z"))
         {
-            gui.DialogueOpen();
-            dialogue.TriggerDialogue();
+            StateChange(InputStateTypes.Dialogue);
         }
         // End Rip out section
 
@@ -77,11 +77,22 @@ public class InputController : MonoBehaviour
         }
         if (Input.GetKeyDown("l"))
         {
-            EnterPanMode();
             StateChange(InputStateTypes.CameraPan);
             return;
         }
         player.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
+        if (PlayerData.wallSlideToggle)
+        {
+            //If it's toggle, swap value on a press
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                player.ToggleWallSlide();
+            }
+        } else
+        {
+            // Otherwise, just set wall slide allow to value of shift press
+            player.SetHoldForWallSlide(Input.GetKey(KeyCode.LeftShift));
+        }
         // We should jump if user is pressing jump button and the player is allowed to jump
         if ((Input.GetKeyDown("space")) && player.GetCanJump() && !player.GetShouldJump())
         {
@@ -103,8 +114,6 @@ public class InputController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             StateChange(InputStateTypes.Menu);
-            returnStateAfterPause = InputStateTypes.FlipDecisionPending;
-            gui.SetMenuActive(true);
             return;
         }
         if (Input.GetMouseButtonUp(1))
@@ -134,13 +143,10 @@ public class InputController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             StateChange(InputStateTypes.Menu);
-            returnStateAfterPause = InputStateTypes.CameraPan;
-            gui.SetMenuActive(true);
             return;
         }
         if (Input.GetKeyDown("l"))
         {
-            ExitPanMode();
             StateChange(InputStateTypes.PlayerControl);
             return;
         }
@@ -152,13 +158,88 @@ public class InputController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            LeaveMenuState();
+            StateChange(returnStateAfterPause);
         }
+    }
+
+    private void HandleDialogueInput()
+    {
+
     }
 
     private void StateChange(InputStateTypes newState)
     {
+        ExitState(inputState);
+        EnterState(newState);
         inputState = newState;
+    }
+
+    private void EnterState(InputStateTypes state)
+    {
+        switch (state)
+        {
+            case InputStateTypes.PlayerControl:
+                EnterPlayerControlMode();
+                break;
+            case InputStateTypes.FlipDecisionPending:
+                EnterFlipDecisionMode();
+                break;
+            case InputStateTypes.CameraPan:
+                EnterPanMode();
+                break;
+            case InputStateTypes.Menu:
+                EnterPauseMode();
+                break;
+            case InputStateTypes.Dialogue:
+                EnterDialogueMode();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ExitState(InputStateTypes state)
+    {
+        switch (state)
+        {
+            case InputStateTypes.PlayerControl:
+                ExitPlayerControlMode();
+                break;
+            case InputStateTypes.FlipDecisionPending:
+                ExitFlipDecisionMode();
+                break;
+            case InputStateTypes.CameraPan:
+                ExitPanMode();
+                break;
+            case InputStateTypes.Menu:
+                ExitPauseMode();
+                break;
+            case InputStateTypes.Dialogue:
+                ExitDialogueMode();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void EnterPlayerControlMode()
+    {
+        levelManager.ResumeGame();
+    }
+
+    private void ExitPlayerControlMode()
+    {
+
+    }
+
+    private void EnterFlipDecisionMode()
+    {
+        levelManager.PauseGame();
+    }
+
+    private void ExitFlipDecisionMode()
+    {
+
     }
 
     private void EnterPanMode()
@@ -172,24 +253,37 @@ public class InputController : MonoBehaviour
         cam.SetPanMode(false);
         cam.SetHorizontalMove(0);
         cam.SetVerticalMove(0);
-        levelManager.ResumeGame();
+        StateChange(InputStateTypes.PlayerControl);
+    }
+
+    private void EnterPauseMode()
+    {
+        returnStateAfterPause = inputState;
+        levelManager.PauseGame();
+        gui.SetMenuActive(true);
+    }
+
+    private void ExitPauseMode()
+    {
+        gui.SetMenuActive(false);
+    }
+
+    private void EnterDialogueMode()
+    {
+        levelManager.PauseGame();
+        gui.DialogueOpen();
+        dialogue.TriggerDialogue();
+    }
+
+    private void ExitDialogueMode()
+    {
+
     }
 
     public void InitiateFlip()
     {
         levelManager.PauseGame();
         StateChange(InputStateTypes.FlipDecisionPending);
-    }
-
-    public void LeaveMenuState()
-    {
-        StateChange(returnStateAfterPause);
-        if (returnStateAfterPause != InputStateTypes.CameraPan &&
-            returnStateAfterPause != InputStateTypes.FlipDecisionPending)
-        {
-            levelManager.ResumeGame();
-        }
-        gui.SetMenuActive(false);
     }
 
     public void CompleteFlip(int index)
@@ -211,5 +305,15 @@ public class InputController : MonoBehaviour
     public bool IsPlayerControl()
     {
         return inputState == InputStateTypes.PlayerControl;
+    }
+
+    public void DialogueComplete()
+    {
+        StateChange(InputStateTypes.PlayerControl);
+    }
+
+    public void PauseFinished()
+    {
+        StateChange(returnStateAfterPause);
     }
 }
