@@ -9,16 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/WelcomeScreen.unity
     guid: d43c0f1713820ec48be60955be4ee176
   - enabled: 1
-    path: Assets/Scenes/Page1.unity
-    guid: 899418355da9615459fd2d57cce71276
-  - enabled: 1
-    path: Assets/Scenes/Page2.unity
-    guid: 87bfd67938c0aaa408d6454f850ee96a
-  - enabled: 1
-    path: Assets/Scenes/Page3.unity
-    guid: 941d7c2db563ac5469b40afddf2f8cb1
-  - enabled: 1
-    path: Assets/Scenes/Page4.unity
+    path: Assets/Scenes/Chapter1.unity
     guid: 50fefc3dcb2cf60469c348a6c852c467
   - enabled: 1
     path: Assets/Scenes/Overworld.unity

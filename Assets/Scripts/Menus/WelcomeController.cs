@@ -15,7 +15,8 @@ public class WelcomeController : MonoBehaviour
 
     public void NewGamePressed()
     {
-        SceneManager.LoadScene("Page1");
+        PlayerData.pageToLoad = 0;
+        SceneManager.LoadScene("Chapter1");
     }
 
     public void LoadPressed()

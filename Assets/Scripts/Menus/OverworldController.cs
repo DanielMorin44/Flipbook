@@ -39,53 +39,10 @@ public class OverworldController : MonoBehaviour
     }
 
     #region Button Methods
-    public void Level1_1Pressed()
+    public void Chapter1ButtonPressed(int page)
     {
-        SceneManager.LoadScene("Page1");
-    }
-
-    public void Level1_2Pressed()
-    {
-        SceneManager.LoadScene("Page2");
-    }
-
-    public void Level1_3Pressed()
-    {
-        SceneManager.LoadScene("Page3");
-    }
-
-    public void Level1_4Pressed()
-    {
-        SceneManager.LoadScene("Page4");
-    }
-
-    public void Level1_5Pressed()
-    {
-        SceneManager.LoadScene("Page5");
-    }
-
-    public void Level1_6Pressed()
-    {
-        SceneManager.LoadScene("Page6");
-    }
-
-    public void Level1_7Pressed()
-    {
-        SceneManager.LoadScene("Page7");
-    }
-    public void Level1_8Pressed()
-    {
-        SceneManager.LoadScene("Page8");
-    }
-
-    public void Level1_9Pressed()
-    {
-        SceneManager.LoadScene("Page9");
-    }
-
-    public void Level1_10Pressed()
-    {
-        SceneManager.LoadScene("Page10");
+        PlayerData.pageToLoad = page;
+        SceneManager.LoadScene("Chapter1");
     }
 
     public void ReturnPressed()

@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class EndController : MonoBehaviour
 {
-    public string nextScene;
-    public int thisLevel;
     public bool locked;
     public InputController inputController;
+    public LevelManager levelManager;
+    public string nextLevel;
+    public int nextPage;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -27,11 +25,7 @@ public class EndController : MonoBehaviour
             // End the stage
             if (!locked)
             {
-                if (thisLevel > PlayerData.highestLevel)
-                {
-                    PlayerData.highestLevel = thisLevel;
-                }
-                SceneManager.LoadScene(nextScene);
+                levelManager.CompleteLevel(nextPage, nextLevel);
             }
         }
     }

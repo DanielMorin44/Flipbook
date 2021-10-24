@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     public PhysicsMaterial2D fullFriction;
 
     // Times
-    public float wallJumpTime;
+   // public float wallJumpTime;
     public float moveLockOnWallJump;
     public float coyoteTime;
 
@@ -119,7 +119,10 @@ public class PlayerController : MonoBehaviour
         moveLockedTime = value;
     }
     float coyoteTimeRemaining;
+    float wallJumpCoyoteTimeRemaining;
     bool jumpedSinceLanded = true;
+    bool wallJumpSinceWallTouch = true;
+    bool wasFacingRightOnLastWallTouch;
 
     // Objects
     private Rigidbody2D rb2d;
@@ -152,7 +155,7 @@ public class PlayerController : MonoBehaviour
     {
         DoTerrainChecks();
         DoSlopeCheck();
-        canWallJump = isFrontTouchingWall;
+        canWallJump = wallJumpCoyoteTimeRemaining > 0f && !wallJumpSinceWallTouch;
         canRegularJump = (coyoteTimeRemaining > 0f && !jumpedSinceLanded);
         if (sliding) { canWallJump = false; canRegularJump = false; }
         wallSliding = (isFrontTouchingWall && inAir && !sliding && holdForWallSlide);
@@ -174,6 +177,10 @@ public class PlayerController : MonoBehaviour
         {
             coyoteTimeRemaining -= Time.deltaTime;
         }
+        if (wallJumpCoyoteTimeRemaining > 0f && !isFrontTouchingWall)
+        {
+            wallJumpCoyoteTimeRemaining -= Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()
@@ -192,11 +199,6 @@ public class PlayerController : MonoBehaviour
         {
             Flip();
         }
-        if (wallJumping)
-        {
-            rb2d.velocity = new Vector2( -facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad), 
-                                        wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
-        }
         DoMovement();
     }
 
@@ -211,6 +213,12 @@ public class PlayerController : MonoBehaviour
         }
         sliding = (slopeSideAngle > maxSlopeAngle);
         isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f), 0, terrain);
+        if (isFrontTouchingWall)
+        {
+            wasFacingRightOnLastWallTouch = isFacingRight;
+            wallJumpSinceWallTouch = false;
+            wallJumpCoyoteTimeRemaining = coyoteTime;
+        }
     }
 
     private void DoSlopeCheck()
@@ -317,8 +325,12 @@ public class PlayerController : MonoBehaviour
         }
         else if(canWallJump)
         {
-            wallJumping = true;
-            Invoke("SetWallJumpToFalse", wallJumpTime);
+            if (isFacingRight == wasFacingRightOnLastWallTouch)
+            {
+                ReverseFacing();
+            }
+            rb2d.velocity = new Vector2(facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad),
+                            wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
         } else
         { // Player jumped during coyote time
@@ -350,11 +362,6 @@ public class PlayerController : MonoBehaviour
         facing *= -1;
     }
     
-    private void SetWallJumpToFalse()
-    {
-        wallJumping = false;
-        ReverseFacing();
-    }
     #endregion
 
     private void Flip()

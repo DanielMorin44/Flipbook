@@ -19,4 +19,7 @@ public static class PlayerData
 
     // Progression
     public static int highestLevel = 0;
+
+    // Scene Loading
+    public static int pageToLoad;
 }

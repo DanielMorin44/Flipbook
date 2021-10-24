@@ -6,6 +6,7 @@ public class GUIController : MonoBehaviour
 {
     public HUDController hud;
     public MenuController menu;
+    public LookThroughController lookThrough;
     public InputController input;
     public GameObject radialSelector;
     public GameObject dialog;
@@ -47,5 +48,14 @@ public class GUIController : MonoBehaviour
     public void CloseSelector()
     {
         radialSelector.SetActive(false);
+    }
+
+    public void OpenLookthrough()
+    {
+        lookThrough.gameObject.SetActive(true);
+    }
+    public void CloseLookthrough()
+    {
+        lookThrough.gameObject.SetActive(false);
     }
 }

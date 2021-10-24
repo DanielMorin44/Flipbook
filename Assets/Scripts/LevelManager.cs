@@ -7,14 +7,30 @@ public class LevelManager : MonoBehaviour
 {
     public PlayerController player;
     public GameObject[] flipCandidates;
+    public GameObject[] ends;
     public Collider2D playerCollider;
 
-    public int curPageIndex = 0;
+    public int activeLevel;
+    private int curPageIndex;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        activeLevel = PlayerData.pageToLoad;
+        //Set Player's Location.
+        foreach (Transform t in flipCandidates[activeLevel].transform)
+        {
+            if (t.name == "PlayerStart")
+            {
+                player.transform.position = t.position;
+            }
+        }
+        //Activate Page
+        SetOnlyOpen(activeLevel);
+        //Activate End
+        ends[activeLevel].SetActive(true);
+        curPageIndex = activeLevel;
     }
 
     public bool FlipLevel(int index)
@@ -75,11 +91,6 @@ public class LevelManager : MonoBehaviour
         return true;
     }
 
-    public int GetTotalPages()
-    {
-        return flipCandidates.Length;
-    }
-
     public int GetCurrentPage()
     {
         return curPageIndex;
@@ -87,23 +98,57 @@ public class LevelManager : MonoBehaviour
 
     public void Open(int index)
     {
+        if (index > flipCandidates.Length-1)
+        {
+            Debug.Log("Page out of scope");
+            return;
+        }
         flipCandidates[index].SetActive(true);
     }
 
     public void Close(int index)
     {
+        if (index > flipCandidates.Length-1)
+        {
+            Debug.Log("Page out of scope");
+            return;
+        }
         flipCandidates[index].SetActive(false);
+    }
+
+    public void SetOnlyOpen(int index)
+    {
+        if (index > flipCandidates.Length-1)
+        {
+            Debug.Log("Page out of scope");
+            return;
+        }
+        for (int i = 0; i < flipCandidates.Length; i++)
+        {
+            Close(i);
+        }
+        Open(index);
     }
 
     public int GetNumberPagesAvailable()
     {
-        return flipCandidates.Length;
+        return activeLevel + 1;
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawCube(playerCollider.bounds.center, new Vector2(playerCollider.bounds.size.x, playerCollider.bounds.size.y * .9f));
+    }
+
+    public void CompleteLevel(int page, string nextLevel)
+    {
+        if (activeLevel > PlayerData.highestLevel)
+        {
+            PlayerData.highestLevel = activeLevel;
+        }
+        PlayerData.pageToLoad = page;
+        SceneManager.LoadScene(nextLevel);
     }
 
 }

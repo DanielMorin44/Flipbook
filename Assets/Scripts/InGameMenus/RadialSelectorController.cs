@@ -29,9 +29,8 @@ public class RadialSelectorController : MonoBehaviour
     {
         currentLocation = cam.ScreenToWorldPoint(Input.mousePosition);
         RedrawPointer();
-        levelManager.Close(currentHover);
         currentHover = CheckSector();
-        levelManager.Open(currentHover);
+        levelManager.SetOnlyOpen(currentHover);
     }
 
     private void OnEnable()

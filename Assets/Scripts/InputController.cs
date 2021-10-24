@@ -26,6 +26,18 @@ public class InputController : MonoBehaviour
     private InputStateTypes inputState;
     private InputStateTypes returnStateAfterPause;
 
+    private KeyCode[] alphaKeyCodes = {
+         KeyCode.Alpha1,
+         KeyCode.Alpha2,
+         KeyCode.Alpha3,
+         KeyCode.Alpha4,
+         KeyCode.Alpha5,
+         KeyCode.Alpha6,
+         KeyCode.Alpha7,
+         KeyCode.Alpha8,
+         KeyCode.Alpha9,
+     };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,7 +87,7 @@ public class InputController : MonoBehaviour
         {
             player.SetShouldReset(true);
         }
-        if (Input.GetKeyDown("l"))
+        if (Input.GetKeyDown("q"))
         {
             StateChange(InputStateTypes.CameraPan);
             return;
@@ -131,9 +143,8 @@ public class InputController : MonoBehaviour
         {
             if (PlayerData.selectionType == PlayerData.SelectionType.Sequential)
             {
-                levelManager.Close(indexCounter);
-                indexCounter++; indexCounter %= levelManager.GetTotalPages();
-                levelManager.Open(indexCounter);
+                indexCounter++; indexCounter %= levelManager.GetNumberPagesAvailable();
+                levelManager.SetOnlyOpen(indexCounter);
             }
         }
     }
@@ -145,13 +156,24 @@ public class InputController : MonoBehaviour
             StateChange(InputStateTypes.Menu);
             return;
         }
-        if (Input.GetKeyDown("l"))
+        if (Input.GetKeyDown("q"))
         {
             StateChange(InputStateTypes.PlayerControl);
             return;
         }
         cam.SetHorizontalMove(Input.GetAxisRaw("Horizontal"));
         cam.SetVerticalMove(Input.GetAxisRaw("Vertical"));
+        for (int i = 0; i < alphaKeyCodes.Length; i++)
+        {
+            if (Input.GetKeyDown(alphaKeyCodes[i]))
+            {
+                if(i < levelManager.GetNumberPagesAvailable())
+                {
+                    levelManager.SetOnlyOpen(i);
+                }
+                return;
+            }
+        }
     }
 
     private void HandleMenuInput()
@@ -245,6 +267,7 @@ public class InputController : MonoBehaviour
     private void EnterPanMode()
     {
         levelManager.PauseGame();
+        gui.OpenLookthrough();
         cam.SetPanMode(true);
     }
 
@@ -253,7 +276,8 @@ public class InputController : MonoBehaviour
         cam.SetPanMode(false);
         cam.SetHorizontalMove(0);
         cam.SetVerticalMove(0);
-        StateChange(InputStateTypes.PlayerControl);
+        levelManager.SetOnlyOpen(levelManager.GetCurrentPage());
+        gui.CloseLookthrough();
     }
 
     private void EnterPauseMode()

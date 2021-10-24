@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public Transform player;
+    public BoxCollider2D sceneBounds;
 
     public float cameraPanSpeed;
 
@@ -26,9 +27,12 @@ public class CameraController : MonoBehaviour
             transform.position = new Vector3(player.transform.position.x, player.transform.position.y, transform.position.z);
         } else
         {
-            transform.position = new Vector3(transform.position.x + (horizontalMove * cameraPanSpeed * Time.unscaledDeltaTime), 
-                                             transform.position.y + (verticalMove * cameraPanSpeed * Time.unscaledDeltaTime), 
-                                             transform.position.z);
+            float newX = transform.position.x + (horizontalMove * cameraPanSpeed * Time.unscaledDeltaTime);
+            float newY = transform.position.y + (verticalMove * cameraPanSpeed * Time.unscaledDeltaTime);
+            if (sceneBounds.bounds.Contains(new Vector3(newX, newY, sceneBounds.gameObject.transform.position.z)))
+            {
+                transform.position = new Vector3(newX, newY, transform.position.z);
+            }
         }
     }
 
