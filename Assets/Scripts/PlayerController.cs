@@ -90,6 +90,7 @@ public class PlayerController : MonoBehaviour
     bool wallSliding;
     bool wallJumping;
     bool inAir;
+    int hasCoin = -1;
 
     // Private Collection vars
     private int numKeys;
@@ -416,5 +417,15 @@ public class PlayerController : MonoBehaviour
     public int GetNumKeys()
     {
         return numKeys;
+    }
+
+    public bool HoldingCoin()
+    {
+        return hasCoin > -1;
+    }
+
+    public void AddCoin()
+    {
+        hasCoin = levelManager.GetCurrentPage();
     }
 }

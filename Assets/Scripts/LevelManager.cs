@@ -10,14 +10,17 @@ public class LevelManager : MonoBehaviour
     public GameObject[] ends;
     public Collider2D playerCollider;
 
-    public int activeLevel;
+    public int activeLevel = -1;
     private int curPageIndex;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        activeLevel = PlayerData.pageToLoad;
+        if (activeLevel == -1)
+        {
+            activeLevel = PlayerData.pageToLoad;
+        }
         //Set Player's Location.
         foreach (Transform t in flipCandidates[activeLevel].transform)
         {

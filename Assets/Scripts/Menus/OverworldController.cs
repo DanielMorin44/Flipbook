@@ -34,7 +34,7 @@ public class OverworldController : MonoBehaviour
     {
         for (int i = PlayerData.highestLevel+1; i < levelSelectButtons.Length; i++)
         {
-            levelSelectButtons[i].interactable = false;
+            levelSelectButtons[i].interactable = i <= PlayerData.highestLevel + 1;
         }
     }
 
