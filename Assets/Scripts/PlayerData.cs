@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.Serialization;
+using System.Linq;
 
 public static class PlayerData
 {
@@ -18,8 +19,13 @@ public static class PlayerData
     public static bool wallSlideToggle = false;
 
     // Progression
+    public static int highestChapter = 0;
     public static int highestLevel = 0;
 
+    // Collectables
+    public static int[] coins = Enumerable.Repeat(-1, 10).ToArray(); //new int[10];
+
+    // Not Saved Variables
     // Scene Loading
     public static int pageToLoad;
 }

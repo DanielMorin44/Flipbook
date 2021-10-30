@@ -150,6 +150,20 @@ public class LevelManager : MonoBehaviour
         {
             PlayerData.highestLevel = activeLevel;
         }
+        // If player has a coin, Update the stored value of the coin
+        if(player.HoldingCoin() > -1)
+        {
+            //Make sure no other level has this coin value
+            for (int i = 0; i < PlayerData.coins.Length; i++)
+            {
+                if (PlayerData.coins[i] == player.HoldingCoin())
+                {
+                    PlayerData.coins[i] = -1;
+                }
+            }
+            PlayerData.coins[activeLevel] = player.HoldingCoin();
+        }
+
         PlayerData.pageToLoad = page;
         SceneManager.LoadScene(nextLevel);
     }

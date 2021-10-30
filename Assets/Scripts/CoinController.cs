@@ -5,16 +5,17 @@ using UnityEngine;
 public class CoinController : MonoBehaviour
 {
 
-    bool locked;
+    public bool locked;
+    public int id;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // If player touches token
+        // If player touches coin
         if (collision.tag == "Player")
         {
             PlayerController player = collision.GetComponent<PlayerController>();
-            // If player can't flip
-            if (!player.HoldingCoin())
+            // If player isn't holding a coin
+            if (player.HoldingCoin() == -1)
             {
                 if (locked)
                 {
@@ -23,7 +24,7 @@ public class CoinController : MonoBehaviour
                 //Destroy Coin and Give to player
                 if (!locked)
                 {
-                    player.AddCoin();
+                    player.AddCoin(id);
                     Destroy(gameObject);
                 }
             }

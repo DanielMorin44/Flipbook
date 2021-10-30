@@ -7,11 +7,11 @@ using UnityEngine.SceneManagement;
 public class OverworldController : MonoBehaviour
 {
     public Button[] levelSelectButtons;
+    public Text[] coinTrack;
 
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -32,9 +32,14 @@ public class OverworldController : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        for (int i = PlayerData.highestLevel+1; i < levelSelectButtons.Length; i++)
+        for (int i = 0; i < levelSelectButtons.Length; i++)
         {
             levelSelectButtons[i].interactable = i <= PlayerData.highestLevel + 1;
+        }
+        for (int i = 0; i < coinTrack.Length; i++)
+        {
+            coinTrack[i].gameObject.SetActive(PlayerData.coins[i] != -1);
+            coinTrack[i].text = PlayerData.coins[i].ToString();
         }
     }
 

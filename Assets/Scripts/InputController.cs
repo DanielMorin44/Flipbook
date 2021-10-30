@@ -110,7 +110,7 @@ public class InputController : MonoBehaviour
         {
             player.SetShouldJump(true);
         }
-        if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
+        if (Input.GetMouseButton(1) && player.GetCanFlip())
         {
             indexCounter = levelManager.GetCurrentPage();
             if (PlayerData.selectionType == PlayerData.SelectionType.Radial)
@@ -306,7 +306,7 @@ public class InputController : MonoBehaviour
 
     public void InitiateFlip()
     {
-        levelManager.PauseGame();
+        //levelManager.PauseGame();
         StateChange(InputStateTypes.FlipDecisionPending);
     }
 

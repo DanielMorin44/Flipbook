@@ -10,7 +10,11 @@ public class SaveDataUnit
     public bool wallSlideToggle;
 
     //Progress
+    public int highestChapter;
     public int highestLevel;
+
+    // Collectables
+    public int[] coins;
 
     public SaveDataUnit()
     {
@@ -19,6 +23,10 @@ public class SaveDataUnit
         wallSlideToggle = PlayerData.wallSlideToggle;
 
         // Progression
+        highestChapter = PlayerData.highestChapter;
         highestLevel = PlayerData.highestLevel;
+
+        // Collectables
+        coins = PlayerData.coins;
     }
 }

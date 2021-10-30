@@ -419,13 +419,13 @@ public class PlayerController : MonoBehaviour
         return numKeys;
     }
 
-    public bool HoldingCoin()
+    public int HoldingCoin()
     {
-        return hasCoin > -1;
+        return hasCoin;
     }
 
-    public void AddCoin()
+    public void AddCoin(int id)
     {
-        hasCoin = levelManager.GetCurrentPage();
+        hasCoin = id;
     }
 }
