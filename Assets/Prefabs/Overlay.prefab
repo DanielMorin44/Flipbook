@@ -3336,6 +3336,7 @@ GameObject:
   - component: {fileID: 130912946120570196}
   - component: {fileID: 8667347542653785225}
   - component: {fileID: 3001319502344088282}
+  - component: {fileID: 809086486}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -3444,7 +3445,38 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8667347542653785225}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_MethodName: DisplayNextSentence
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &809086486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7065758663349095204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d3334c60a56e324c9d182b53ec2fb47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogue:
+    name: Fairy Guide
+    sentences:
+    - Hi! I'm the Guide NPC! I'm here to help explain plot.
+    - Wow, what is that thing with a sprite picture that I really haven't thought
+      of a good one for yet?
+    - Why don't you go pick it up and press F to tell me to use it?
 --- !u!1 &7328802693670977451
 GameObject:
   m_ObjectHideFlags: 0
@@ -5291,7 +5323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8972421643699274032, guid: f89a33f16d8922c48bae797c609eac39, type: 3}
       propertyPath: m_Text
-      value: Build 0.0.7
+      value: Build 0.0.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f89a33f16d8922c48bae797c609eac39, type: 3}

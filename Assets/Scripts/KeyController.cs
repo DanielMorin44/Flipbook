@@ -11,9 +11,12 @@ public class KeyController : MonoBehaviour
         if (collision.tag == "Player")
         {
             PlayerController player = collision.GetComponent<PlayerController>();
-            //Add a key and destroy this key
-            player.AddKey(1);
-            Destroy(gameObject);
+            if(collision == player.GetComponent<BoxCollider2D>())
+            {
+                //Add a key and destroy this key
+                player.AddKey(1);
+                Destroy(gameObject);
+            }
         }
     }
 }
