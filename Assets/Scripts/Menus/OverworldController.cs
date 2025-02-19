@@ -32,6 +32,7 @@ public class OverworldController : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        PlayerData.highestLevel = 9;
         for (int i = 0; i < levelSelectButtons.Length; i++)
         {
             levelSelectButtons[i].interactable = i <= PlayerData.highestLevel + 1;
@@ -48,6 +49,12 @@ public class OverworldController : MonoBehaviour
     {
         PlayerData.pageToLoad = page;
         SceneManager.LoadScene("Chapter1");
+    }
+
+    public void Chapter1Button10Pressed()
+    {
+        PlayerData.pageToLoad = 10;
+        SceneManager.LoadScene("Chapter1Page10");
     }
 
     public void ReturnPressed()

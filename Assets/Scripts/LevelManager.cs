@@ -21,6 +21,12 @@ public class LevelManager : MonoBehaviour
         {
             activeLevel = PlayerData.pageToLoad;
         }
+        if(activeLevel == 10)
+        {
+            DoChapterEndSetup();
+            //return;
+        }
+        Debug.Log(activeLevel);
         //Set Player's Location.
         foreach (Transform t in flipCandidates[activeLevel].transform)
         {
@@ -34,6 +40,11 @@ public class LevelManager : MonoBehaviour
         //Activate End
         ends[activeLevel].SetActive(true);
         curPageIndex = activeLevel;
+    }
+
+    void DoChapterEndSetup()
+    {
+        activeLevel = 0;
     }
 
     public bool FlipLevel(int index)

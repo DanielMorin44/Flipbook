@@ -9,9 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/WelcomeScreen.unity
     guid: d43c0f1713820ec48be60955be4ee176
   - enabled: 1
+    path: Assets/Scenes/Overworld.unity
+    guid: ee10d476bcdbaf143953dd01cced8130
+  - enabled: 1
     path: Assets/Scenes/Chapter1.unity
     guid: 50fefc3dcb2cf60469c348a6c852c467
   - enabled: 1
-    path: Assets/Scenes/Overworld.unity
-    guid: ee10d476bcdbaf143953dd01cced8130
+    path: Assets/Scenes/Chapter1Page10.unity
+    guid: dbf231dffac55b04bbaf1f6bfe403370
   m_configObjects: {}

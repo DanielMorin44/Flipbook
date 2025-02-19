@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class KeyController : MonoBehaviour
@@ -10,13 +8,9 @@ public class KeyController : MonoBehaviour
         // If player touches token
         if (collision.tag == "Player")
         {
-            PlayerController player = collision.GetComponent<PlayerController>();
-            if(collision == player.GetComponent<BoxCollider2D>())
-            {
-                //Add a key and destroy this key
-                player.AddKey(1);
-                Destroy(gameObject);
-            }
+            //Add a key and destroy this key
+            collision.GetComponent<PlayerController>().AddKey(1);
+            Destroy(gameObject);
         }
     }
 }
