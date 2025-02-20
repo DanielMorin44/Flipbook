@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviour
     private LevelManager levelManager;
     private InputController inputController;
 
+    // Animations
+    public Animator anim;
+
     // Private vars
     // state vars
     bool canWallJump, canRegularJump, shouldJump, jumping;
@@ -207,11 +210,30 @@ public class PlayerController : MonoBehaviour
     {
         // Check Contact points for touching terrain
         inAir = !Physics2D.OverlapBox(new Vector2(circle.bounds.center.x, circle.bounds.min.y), new Vector2(circle.bounds.size.x * .8f, checkWidth), 0, terrain);
+
+        // Reset state variables due to landing / jamping / falling
         if (!inAir)
         {
             jumpedSinceLanded = false;
             coyoteTimeRemaining = coyoteTime;
+
+            //animations
+            anim.SetBool("inAir", false);
+            anim.SetBool("isFalling", false);
         }
+        else
+        {            
+            //animations
+            anim.SetBool("inAir", true);
+
+            if (rb2d.linearVelocity.y <= 0)
+            {
+                //animations
+                anim.SetBool("isFalling", true);
+            }
+
+        }
+        
         sliding = (slopeSideAngle > maxSlopeAngle);
         isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f), 0, terrain);
         if (isFrontTouchingWall)
@@ -284,6 +306,18 @@ public class PlayerController : MonoBehaviour
         {
             ReverseFacing();
         }
+
+        //Animation
+        if (horizontalMove == 0 && !inAir)
+        {
+            anim.SetBool("isRunning", false);
+        }
+        else if (!inAir)
+        {
+            anim.SetBool("isRunning", true);
+        }
+
+        //Movement
         float speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
         if (inAir)
         {
@@ -308,7 +342,6 @@ public class PlayerController : MonoBehaviour
            float xVel = (horizontalMove * speed);
            float yVel = 0.0f;
            rb2d.linearVelocity = new Vector2(xVel, yVel);
-            Debug.Log("Running on ground");
         }
     }
 
@@ -324,6 +357,10 @@ public class PlayerController : MonoBehaviour
             jumpVector.y = jumpForce;
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
+
+            //Trigger jump animations
+
+
         }
         else if(canWallJump)
         {
@@ -334,6 +371,9 @@ public class PlayerController : MonoBehaviour
             rb2d.linearVelocity = new Vector2(facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad),
                             wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
+
+            //Trigger jump animations
+
         } else
         { // Player jumped during coyote time
           // If player is not wall jumping, set jump vector normally
@@ -341,6 +381,9 @@ public class PlayerController : MonoBehaviour
             jumpVector.y = jumpForce;
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
+
+            //Trigger jump animations
+
         }
         SetShouldJump(false);
         canWallJump = false;
