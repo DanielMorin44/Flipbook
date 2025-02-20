@@ -146,8 +146,8 @@ public class PlayerController : MonoBehaviour
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
         circle = GetComponent<CircleCollider2D>();
-        inputController = GameObject.FindObjectOfType<InputController>();
-        levelManager = GameObject.FindObjectOfType<LevelManager>();
+        inputController = GameObject.FindFirstObjectByType<InputController>();
+        levelManager = GameObject.FindFirstObjectByType<LevelManager>();
     }
 
     // Update is called once per frame
