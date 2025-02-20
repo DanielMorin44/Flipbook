@@ -308,6 +308,7 @@ public class PlayerController : MonoBehaviour
            float xVel = (horizontalMove * speed);
            float yVel = 0.0f;
            rb2d.velocity = new Vector2(xVel, yVel);
+            Debug.Log("Running on ground");
         }
     }
 
