@@ -288,26 +288,26 @@ public class PlayerController : MonoBehaviour
         if (inAir)
         {
             float xVel = (horizontalMove * speed);
-            float yVel = rb2d.velocity.y;
+            float yVel = rb2d.linearVelocity.y;
             if (wallSliding)
             {
                 xVel = 0;
-                yVel = Mathf.Clamp(rb2d.velocity.y, -wallSlidingSpeed, float.MaxValue);
+                yVel = Mathf.Clamp(rb2d.linearVelocity.y, -wallSlidingSpeed, float.MaxValue);
             }
 
-            rb2d.velocity = new Vector2(xVel, yVel);
+            rb2d.linearVelocity = new Vector2(xVel, yVel);
         }
         else if (isOnSlope && canWalkOnSlope)
         {
             float xVel = ( slopeNormalPerp.x * -horizontalMove * speed);
             float yVel = ( slopeNormalPerp.y * -horizontalMove * speed);
-            rb2d.velocity = new Vector2(xVel, yVel);
+            rb2d.linearVelocity = new Vector2(xVel, yVel);
         }
         else if (!isOnSlope)
         {
            float xVel = (horizontalMove * speed);
            float yVel = 0.0f;
-           rb2d.velocity = new Vector2(xVel, yVel);
+           rb2d.linearVelocity = new Vector2(xVel, yVel);
             Debug.Log("Running on ground");
         }
     }
@@ -320,9 +320,9 @@ public class PlayerController : MonoBehaviour
         if (!inAir)
         {
             // If player is not wall jumping, set jump vector normally
-            Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
+            Vector2 jumpVector = new Vector2(rb2d.linearVelocity.x, 0);
             jumpVector.y = jumpForce;
-            rb2d.velocity = jumpVector;
+            rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
         }
         else if(canWallJump)
@@ -331,15 +331,15 @@ public class PlayerController : MonoBehaviour
             {
                 ReverseFacing();
             }
-            rb2d.velocity = new Vector2(facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad),
+            rb2d.linearVelocity = new Vector2(facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad),
                             wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
         } else
         { // Player jumped during coyote time
           // If player is not wall jumping, set jump vector normally
-            Vector2 jumpVector = new Vector2(rb2d.velocity.x, 0);
+            Vector2 jumpVector = new Vector2(rb2d.linearVelocity.x, 0);
             jumpVector.y = jumpForce;
-            rb2d.velocity = jumpVector;
+            rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
         }
         SetShouldJump(false);
@@ -349,12 +349,12 @@ public class PlayerController : MonoBehaviour
 
     private void StopVerticalVelocity()
     {
-        rb2d.velocity = new Vector2(rb2d.velocity.x, 0);
+        rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, 0);
     }
 
     private void StopHorizontalVelocity()
     {
-        rb2d.velocity = new Vector2(0, rb2d.velocity.y);
+        rb2d.linearVelocity = new Vector2(0, rb2d.linearVelocity.y);
     }
 
     private void ReverseFacing()
