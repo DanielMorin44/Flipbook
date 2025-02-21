@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     public PhysicsMaterial2D fullFriction;
 
     // Times
-   // public float wallJumpTime;
+    // public float wallJumpTime;
     public float moveLockOnWallJump;
     public float coyoteTime;
 
@@ -32,6 +32,13 @@ public class PlayerController : MonoBehaviour
     // Objects
     private LevelManager levelManager;
     private InputController inputController;
+
+    // Animations
+    public Animator anim;
+
+    //Sounds
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
 
     // Private vars
     // state vars
@@ -146,8 +153,8 @@ public class PlayerController : MonoBehaviour
         terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
         circle = GetComponent<CircleCollider2D>();
-        inputController = GameObject.FindObjectOfType<InputController>();
-        levelManager = GameObject.FindObjectOfType<LevelManager>();
+        inputController = GameObject.FindFirstObjectByType<InputController>();
+        levelManager = GameObject.FindFirstObjectByType<LevelManager>();
     }
 
     // Update is called once per frame
@@ -169,12 +176,12 @@ public class PlayerController : MonoBehaviour
                 moveLockedTime = 0.0f;
             }
             moveLockedTime -= Time.deltaTime;
-            if(moveLockedTime < 0f)
+            if (moveLockedTime < 0f)
             {
                 horizontalMove = 0.0f;
             }
         }
-        if(coyoteTimeRemaining > 0f && inAir)
+        if (coyoteTimeRemaining > 0f && inAir)
         {
             coyoteTimeRemaining -= Time.deltaTime;
         }
@@ -207,11 +214,30 @@ public class PlayerController : MonoBehaviour
     {
         // Check Contact points for touching terrain
         inAir = !Physics2D.OverlapBox(new Vector2(circle.bounds.center.x, circle.bounds.min.y), new Vector2(circle.bounds.size.x * .8f, checkWidth), 0, terrain);
+
+        // Reset state variables due to landing / jamping / falling
         if (!inAir)
         {
             jumpedSinceLanded = false;
             coyoteTimeRemaining = coyoteTime;
+
+            //animations
+            anim.SetBool("inAir", false);
+            anim.SetBool("isFalling", false);
         }
+        else
+        {
+            //animations
+            anim.SetBool("inAir", true);
+
+            if (rb2d.linearVelocity.y <= 0)
+            {
+                //animations
+                anim.SetBool("isFalling", true);
+            }
+
+        }
+
         sliding = (slopeSideAngle > maxSlopeAngle);
         isFrontTouchingWall = Physics2D.OverlapBox(new Vector2(circle.bounds.center.x + (circle.bounds.extents.x * facing), circle.bounds.center.y), new Vector2(checkWidth, circle.bounds.size.y * .8f), 0, terrain);
         if (isFrontTouchingWall)
@@ -241,14 +267,16 @@ public class PlayerController : MonoBehaviour
                 slopeSideAngle = Vector2.Angle(slopeHitFront.normal, Vector2.up);
                 isOnSlope = true;
             }
-        } else  if (slopeHitBack)
+        }
+        else if (slopeHitBack)
         {
             if (Vector2.Angle(slopeHitBack.normal, Vector2.up) < wallAngle)
             {
                 slopeSideAngle = Vector2.Angle(slopeHitBack.normal, Vector2.up);
                 isOnSlope = true;
             }
-        } else
+        }
+        else
         {
             slopeSideAngle = 0.0f;
             isOnSlope = false;
@@ -263,7 +291,7 @@ public class PlayerController : MonoBehaviour
         {
             slopeNormalPerp = Vector2.Perpendicular(hit.normal).normalized;
             slopeDownAngle = Vector2.Angle(hit.normal, Vector2.up);
-            if(slopeDownAngle != slopeDownAngleOld)
+            if (slopeDownAngle != slopeDownAngleOld)
             {
                 isOnSlope = true;
             }
@@ -284,6 +312,18 @@ public class PlayerController : MonoBehaviour
         {
             ReverseFacing();
         }
+
+        //Animation
+        if (horizontalMove == 0 && !inAir)
+        {
+            anim.SetBool("isRunning", false);
+        }
+        else if (!inAir)
+        {
+            anim.SetBool("isRunning", true);
+        }
+
+        //Movement
         float speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
         if (inAir)
         {
@@ -299,16 +339,15 @@ public class PlayerController : MonoBehaviour
         }
         else if (isOnSlope && canWalkOnSlope)
         {
-            float xVel = ( slopeNormalPerp.x * -horizontalMove * speed);
-            float yVel = ( slopeNormalPerp.y * -horizontalMove * speed);
+            float xVel = (slopeNormalPerp.x * -horizontalMove * speed);
+            float yVel = (slopeNormalPerp.y * -horizontalMove * speed);
             rb2d.linearVelocity = new Vector2(xVel, yVel);
         }
         else if (!isOnSlope)
         {
-           float xVel = (horizontalMove * speed);
-           float yVel = 0.0f;
-           rb2d.linearVelocity = new Vector2(xVel, yVel);
-            Debug.Log("Running on ground");
+            float xVel = (horizontalMove * speed);
+            float yVel = 0.0f;
+            rb2d.linearVelocity = new Vector2(xVel, yVel);
         }
     }
 
@@ -324,8 +363,14 @@ public class PlayerController : MonoBehaviour
             jumpVector.y = jumpForce;
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
+
+            //Trigger jump sound
+            PlayClip("jump");
+
+
+
         }
-        else if(canWallJump)
+        else if (canWallJump)
         {
             if (isFacingRight == wasFacingRightOnLastWallTouch)
             {
@@ -334,13 +379,22 @@ public class PlayerController : MonoBehaviour
             rb2d.linearVelocity = new Vector2(facing * wallJumpForce * Mathf.Cos(wallJumpAngle * Mathf.Deg2Rad),
                             wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
-        } else
+
+            //Trigger jump sound
+            PlayClip("jump");
+
+        }
+        else
         { // Player jumped during coyote time
           // If player is not wall jumping, set jump vector normally
             Vector2 jumpVector = new Vector2(rb2d.linearVelocity.x, 0);
             jumpVector.y = jumpForce;
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
+
+            //Trigger jump sound
+            PlayClip("jump");
+
         }
         SetShouldJump(false);
         canWallJump = false;
@@ -363,7 +417,7 @@ public class PlayerController : MonoBehaviour
         isFacingRight = !isFacingRight;
         facing *= -1;
     }
-    
+
     #endregion
 
     private void Flip()
@@ -376,6 +430,7 @@ public class PlayerController : MonoBehaviour
     public void FlipSuccess()
     {
         canFlip = false;
+        PlayClip("page flip");
     }
 
     public void Kill()
@@ -428,5 +483,44 @@ public class PlayerController : MonoBehaviour
     public void AddCoin(int id)
     {
         hasCoin = id;
+    }
+
+
+    //Audio
+
+    public void PlayClip(string clipName)
+    {
+        int clipToPlay = 0;
+
+        switch (clipName)
+        {
+            case "light footstep":
+                clipToPlay = 0;
+                break;
+            case "big footstep":
+                clipToPlay = 1;
+                break;
+            case "jump":
+                clipToPlay = 2;
+                break;
+            case "land":
+                clipToPlay = 3;
+                break;
+            case "gem":
+                clipToPlay = 4;
+                break;
+            case "page flip":
+                clipToPlay = 5;
+                break;
+            default:
+                clipToPlay = -1; //safety if there is no string match
+                break;
+        }
+
+        if (clipToPlay >= 0 && clipToPlay < audioClips.Length)
+        {
+            audioSource.PlayOneShot(audioClips[clipToPlay]);
+        }
+
     }
 }

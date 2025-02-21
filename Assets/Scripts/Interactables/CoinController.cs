@@ -23,6 +23,7 @@ public class CoinController : MonoBehaviour
                 if (!locked)
                 {
                     player.AddCoin(id);
+                    player.PlayClip("gem");
                     Destroy(gameObject);
                 }
             }
