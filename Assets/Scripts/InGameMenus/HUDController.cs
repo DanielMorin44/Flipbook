@@ -21,6 +21,6 @@ public class HUDController : MonoBehaviour
     {
         numKeysText.text = "Num Keys: " + player.GetNumKeys().ToString();
         flipText.text = player.GetCanFlip() ? "Can Flip = true" : "Can Flip = false";
-        pageNumberText.text = "Page: " + (levelManager.GetCurrentPage()+1).ToString();
+        pageNumberText.text = "Page: " + (levelManager.GetOpenedPage()+1).ToString();
     }
 }
