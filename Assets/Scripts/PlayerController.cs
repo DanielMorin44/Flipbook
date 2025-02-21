@@ -36,6 +36,10 @@ public class PlayerController : MonoBehaviour
     // Animations
     public Animator anim;
 
+    //Sounds
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+
     // Private vars
     // state vars
     bool canWallJump, canRegularJump, shouldJump, jumping;
@@ -358,7 +362,9 @@ public class PlayerController : MonoBehaviour
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
 
-            //Trigger jump animations
+            //Trigger jump sound
+            PlayClip("jump");
+            
 
 
         }
@@ -372,7 +378,8 @@ public class PlayerController : MonoBehaviour
                             wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
 
-            //Trigger jump animations
+            //Trigger jump sound
+            PlayClip("jump");
 
         } else
         { // Player jumped during coyote time
@@ -382,7 +389,8 @@ public class PlayerController : MonoBehaviour
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
 
-            //Trigger jump animations
+            //Trigger jump sound
+            PlayClip("jump");
 
         }
         SetShouldJump(false);
@@ -419,6 +427,7 @@ public class PlayerController : MonoBehaviour
     public void FlipSuccess()
     {
         canFlip = false;
+        PlayClip("page flip");
     }
 
     public void Kill()
@@ -471,5 +480,44 @@ public class PlayerController : MonoBehaviour
     public void AddCoin(int id)
     {
         hasCoin = id;
+    }
+
+
+    //Audio
+
+    public void PlayClip(string clipName)
+    {
+        int clipToPlay = 0;
+
+        switch (clipName)
+        {
+            case "light footstep":
+                clipToPlay = 0;
+                break;
+            case "big footstep":
+                clipToPlay = 1;
+                break;
+            case "jump":
+                clipToPlay = 2;
+                break;
+            case "land":
+                clipToPlay = 3;
+                break;
+            case "gem":
+                clipToPlay = 4;
+                break;
+            case "page flip":
+                clipToPlay = 5;
+                break;
+            default:
+                clipToPlay = -1; //safety if there is no string match
+                break;
+        }
+
+        if(clipToPlay >= 0 && clipToPlay < audioClips.Length)
+        {
+            audioSource.PlayOneShot(audioClips[clipToPlay]);
+        }
+
     }
 }

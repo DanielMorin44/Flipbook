@@ -14,6 +14,7 @@ public class FlipTokenController : MonoBehaviour
             {
                 //Destroy Token and allow player to flip
                 player.SetCanFlip(true);
+                player.PlayClip("gem");
                 Destroy(gameObject);
             }
         }
