@@ -311,7 +311,7 @@ public class PlayerController : MonoBehaviour
             ReverseFacing();
         }
 
-        //Animation
+        //Animation and audio checks
         if (horizontalMove == 0 && !inAir)
         {
             anim.SetBool("isRunning", false);
@@ -321,8 +321,17 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isRunning", true);
         }
 
-        //Movement
-        float speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
+        if (wallSliding)
+        {
+            anim.SetBool("isWallsliding", true);
+        }
+        else
+        {
+            anim.SetBool("isWallsliding", false);
+        }
+
+            //Movement
+            float speed = inAir ? inAirHorizontalSpeed : groundHorizontalSpeed;
         if (inAir)
         {
             float xVel = (horizontalMove * speed);
@@ -333,7 +342,7 @@ public class PlayerController : MonoBehaviour
                 yVel = Mathf.Clamp(rb2d.linearVelocity.y, -wallSlidingSpeed, float.MaxValue);
             }
 
-            rb2d.linearVelocity = new Vector2(xVel, yVel);
+                rb2d.linearVelocity = new Vector2(xVel, yVel);
         }
         else if (isOnSlope && canWalkOnSlope)
         {
@@ -361,12 +370,6 @@ public class PlayerController : MonoBehaviour
             jumpVector.y = jumpForce;
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
-
-            //Trigger jump sound
-            PlayClip("jump");
-            
-
-
         }
         else if(canWallJump)
         {
@@ -378,9 +381,6 @@ public class PlayerController : MonoBehaviour
                             wallJumpForce * Mathf.Sin(wallJumpAngle * Mathf.Deg2Rad));
             SetMoveLockedTime(moveLockOnWallJump);
 
-            //Trigger jump sound
-            PlayClip("jump");
-
         } else
         { // Player jumped during coyote time
           // If player is not wall jumping, set jump vector normally
@@ -389,13 +389,15 @@ public class PlayerController : MonoBehaviour
             rb2d.linearVelocity = jumpVector;
             jumpedSinceLanded = true;
 
-            //Trigger jump sound
-            PlayClip("jump");
-
         }
         SetShouldJump(false);
         canWallJump = false;
         canRegularJump = false;
+
+        //Set animation triggers
+        anim.SetBool("isFalling", false);
+        anim.SetBool("isWallsliding", false);
+        anim.SetTrigger("jumped");
     }
 
     private void StopVerticalVelocity()
@@ -488,6 +490,7 @@ public class PlayerController : MonoBehaviour
     public void PlayClip(string clipName)
     {
         int clipToPlay = 0;
+        bool continuous = false;
 
         switch (clipName)
         {
@@ -509,15 +512,35 @@ public class PlayerController : MonoBehaviour
             case "page flip":
                 clipToPlay = 5;
                 break;
+            case "wallslide":
+                clipToPlay = 6;
+                continuous = true;
+                break;
             default:
                 clipToPlay = -1; //safety if there is no string match
+                Debug.Log("Sound not found: " + clipName);
                 break;
         }
 
-        if(clipToPlay >= 0 && clipToPlay < audioClips.Length)
+  
+        if (clipToPlay >= 0 && clipToPlay < audioClips.Length)
         {
-            audioSource.PlayOneShot(audioClips[clipToPlay]);
+
+            if (continuous)
+            {
+                audioSource.clip = audioClips[clipToPlay];
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.PlayOneShot(audioClips[clipToPlay]);
+            }
         }
 
+    }
+
+    public void StopClip()
+    {
+        audioSource.clip = null; // don't use audioSource.Stop() because it messes with the OneShots
     }
 }
