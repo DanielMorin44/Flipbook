@@ -7,7 +7,9 @@ public class HUDController : MonoBehaviour
 {
     public Text flipText;
     public Text numKeysText;
+    public Text pageNumberText;
     public PlayerController player;
+    public LevelManager levelManager;
 
     // Start is called before the first frame update
     void Start()
@@ -19,5 +21,6 @@ public class HUDController : MonoBehaviour
     {
         numKeysText.text = "Num Keys: " + player.GetNumKeys().ToString();
         flipText.text = player.GetCanFlip() ? "Can Flip = true" : "Can Flip = false";
+        pageNumberText.text = "Page: " + (levelManager.GetCurrentPage()+1).ToString();
     }
 }
