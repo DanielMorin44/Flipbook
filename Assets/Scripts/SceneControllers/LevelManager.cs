@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     public Collider2D playerCollider;
 
     public int activeLevel = -1;
+    public int openPage = -1;
     private int curPageIndex;
 
 
@@ -109,6 +110,11 @@ public class LevelManager : MonoBehaviour
         return curPageIndex;
     }
 
+    public int GetOpenedPage()
+    {
+        return openPage;
+    }
+
     public void Open(int index)
     {
         if (index > flipCandidates.Length-1)
@@ -117,6 +123,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
         flipCandidates[index].SetActive(true);
+        openPage = index;
     }
 
     public void Close(int index)
@@ -127,6 +134,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
         flipCandidates[index].SetActive(false);
+        openPage = curPageIndex;
     }
 
     public void SetOnlyOpen(int index)
