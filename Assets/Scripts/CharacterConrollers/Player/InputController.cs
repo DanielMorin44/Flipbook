@@ -110,8 +110,17 @@ public class InputController : MonoBehaviour
         {
             player.SetShouldJump(true);
         }
+        if (player.isSplitScreen)
+        {
+            if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
+            {
+                player.handleSplitScreenFlip();
+            }
+            return;
+        }
         if (Input.GetMouseButton(1) && player.GetCanFlip())
         {
+            
             indexCounter = levelManager.GetCurrentPage();
             if (PlayerData.selectionType == PlayerData.SelectionType.Radial)
             {

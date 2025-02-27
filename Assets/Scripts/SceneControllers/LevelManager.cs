@@ -26,7 +26,6 @@ public class LevelManager : MonoBehaviour
             DoChapterEndSetup();
             //return;
         }
-        Debug.Log(activeLevel);
         //Set Player's Location.
         foreach (Transform t in flipCandidates[activeLevel].transform)
         {

@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
+    // This 'split-screen' config option is gross and should be replaced with some inheritance model
+    public bool isSplitScreen;
+    private bool sideA;
+    public TilemapCollider2D sideAMap;
+    public TilemapCollider2D sideBMap;
+    public GameObject playerShadow;
+
     // Public vars
     // Speeds
     public float groundHorizontalSpeed;
@@ -30,11 +38,12 @@ public class PlayerController : MonoBehaviour
     public float slopeCheckDistance;
 
     // Objects
-    private LevelManager levelManager;
-    private InputController inputController;
+    protected LevelManager levelManager;
+    protected InputController inputController;
 
     // Animations
     public Animator anim;
+    public Animator shadowAnimator;
 
     //Sounds
     public AudioSource audioSource;
@@ -42,7 +51,7 @@ public class PlayerController : MonoBehaviour
 
     // Private vars
     // state vars
-    bool canWallJump, canRegularJump, shouldJump, jumping;
+    protected bool canWallJump, canRegularJump, shouldJump, jumping;
     public void SetShouldJump(bool value)
     {
         shouldJump = value;
@@ -56,7 +65,7 @@ public class PlayerController : MonoBehaviour
         return canRegularJump || canWallJump;
     }
 
-    bool canFlip, shouldFlip;
+    protected bool canFlip, shouldFlip;
     public void SetShouldFlip(bool value)
     {
         shouldFlip = value;
@@ -70,7 +79,7 @@ public class PlayerController : MonoBehaviour
         return canFlip;
     }
 
-    bool shouldReset;
+    protected bool shouldReset;
     public void SetShouldReset(bool value)
     {
         shouldReset = value;
@@ -91,16 +100,16 @@ public class PlayerController : MonoBehaviour
         holdForWallSlide = !holdForWallSlide;
     }
 
-    bool isFacingRight;
-    float facing;
+    protected bool isFacingRight;
+    protected float facing;
     bool isFrontTouchingWall;
-    bool wallSliding;
+    protected bool wallSliding;
     bool wallJumping;
     bool inAir;
     int hasCoin = -1;
 
     // Private Collection vars
-    private int numKeys;
+    protected int numKeys;
 
     // Private slope vars
     private float slopeDownAngle;
@@ -113,7 +122,7 @@ public class PlayerController : MonoBehaviour
     private float wallAngle = 87;
 
     // Time Vars
-    float moveLockedTime;
+    protected float moveLockedTime;
     public float GetMoveLockedTime()
     {
         return moveLockedTime;
@@ -126,23 +135,24 @@ public class PlayerController : MonoBehaviour
     {
         moveLockedTime = value;
     }
-    float coyoteTimeRemaining;
+    protected float coyoteTimeRemaining;
     float wallJumpCoyoteTimeRemaining;
     bool jumpedSinceLanded = true;
     bool wallJumpSinceWallTouch = true;
     bool wasFacingRightOnLastWallTouch;
 
     // Objects
-    private Rigidbody2D rb2d;
-    private CircleCollider2D circle;
-    private LayerMask terrain;
+    protected Rigidbody2D rb2d;
+    protected CircleCollider2D circle;
+    protected BoxCollider2D box;
+    protected LayerMask terrain;
 
     // Start is called before the first frame update
     void Start()
     {
         canWallJump = false;
         canRegularJump = false;
-        canFlip = false;
+        canFlip = isSplitScreen;
         shouldReset = false;
         wallSliding = false;
         isFacingRight = true;
@@ -150,8 +160,11 @@ public class PlayerController : MonoBehaviour
         facing = 1;
         moveLockedTime = 0f;
         coyoteTimeRemaining = coyoteTime;
-        terrain = LayerMask.GetMask("terrain");
+        terrain = isSplitScreen ? LayerMask.GetMask("SideA") : LayerMask.GetMask("terrain");
+        if(sideBMap != null) sideBMap.enabled = false;
+        sideA = true;
         rb2d = GetComponent<Rigidbody2D>();
+        box = GetComponent<BoxCollider2D>();
         circle = GetComponent<CircleCollider2D>();
         inputController = GameObject.FindFirstObjectByType<InputController>();
         levelManager = GameObject.FindFirstObjectByType<LevelManager>();
@@ -222,18 +235,18 @@ public class PlayerController : MonoBehaviour
             coyoteTimeRemaining = coyoteTime;
 
             //animations
-            anim.SetBool("inAir", false);
-            anim.SetBool("isFalling", false);
+            setAnimationVal("inAir", false);
+            setAnimationVal("isFalling", false);
         }
         else
         {
             //animations
-            anim.SetBool("inAir", true);
+            setAnimationVal("inAir", true);
 
             if (rb2d.linearVelocity.y <= 0)
             {
                 //animations
-                anim.SetBool("isFalling", true);
+                setAnimationVal("isFalling", true);
             }
 
         }
@@ -316,11 +329,11 @@ public class PlayerController : MonoBehaviour
         //Animation
         if (horizontalMove == 0 && !inAir)
         {
-            anim.SetBool("isRunning", false);
+            setAnimationVal("isRunning", false);
         }
         else if (!inAir)
         {
-            anim.SetBool("isRunning", true);
+            setAnimationVal("isRunning", true);
         }
 
         //Movement
@@ -420,16 +433,71 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    private bool CheckSplitScreenFlipAllowed()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(box.bounds.center,
+                                                        new Vector2(box.bounds.size.x, box.bounds.size.y * .9f),
+                                                        0,
+                                                        sideA ? LayerMask.GetMask("SideA") : LayerMask.GetMask("SideB"));
+
+        if (colliders.Length != 0)
+        {
+            Debug.Log("We collided");
+            return false;
+        }
+        return true;
+        /*for (int i = 0; i < colliders.Length; i++)
+        {
+            Component collider = flipCandidates[index].GetComponentInChildren(typeof(Grid)).GetComponentInChildren(typeof(CompositeCollider2D));
+            if (colliders[i].gameObject.name == collider.gameObject.name)
+            {
+                flipCandidates[index].SetActive(false);
+                return false;
+            }
+        }*/
+    }
+
+    public void handleSplitScreenFlip()
+    {
+        if (CheckSplitScreenFlipAllowed())
+        {
+            Debug.Log("We Flipped!");
+            sideA = !sideA;
+            if (sideA)
+            {
+                terrain = LayerMask.GetMask("SideA");
+                gameObject.layer = LayerMask.NameToLayer("SideAPlayer");
+                playerShadow.layer = LayerMask.NameToLayer("SideBPlayer");
+                sideAMap.enabled = true;
+                sideBMap.enabled = false;
+            } else
+            {
+                terrain = LayerMask.GetMask("SideB");
+                gameObject.layer = LayerMask.NameToLayer("SideBPlayer");
+                playerShadow.layer = LayerMask.NameToLayer("SideAPlayer");
+                sideBMap.enabled = true;
+                sideAMap.enabled = false;
+            }
+        }
+    }
+
     private void Flip()
     {
         shouldFlip = false;
-        // CanFlip = true if flip failed
-        inputController.InitiateFlip();
+        if (isSplitScreen)
+        {
+            handleSplitScreenFlip();
+        }
+        else
+        {
+            // CanFlip = true if flip failed
+            inputController.InitiateFlip();
+        }
     }
 
     public void FlipSuccess()
     {
-        canFlip = false;
+        canFlip = isSplitScreen;
         PlayClip("page flip");
     }
 
@@ -483,6 +551,15 @@ public class PlayerController : MonoBehaviour
     public void AddCoin(int id)
     {
         hasCoin = id;
+    }
+
+    private void setAnimationVal(string fieldName, bool value)
+    {
+        anim.SetBool(fieldName, value);
+        if (shadowAnimator != null)
+        {
+            shadowAnimator.SetBool(fieldName, value);
+        }
     }
 
 
