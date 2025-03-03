@@ -106,19 +106,20 @@ public class InputController : MonoBehaviour
             player.SetHoldForWallSlide(Input.GetKey(KeyCode.LeftShift));
         }
         // We should jump if user is pressing jump button and the player is allowed to jump
-        if ((Input.GetKeyDown("space")) && player.GetCanJump() && !player.GetShouldJump())
+        if ((Input.GetKeyDown("space")) && player.GetCanJump() && !player.shouldJump)
         {
-            player.SetShouldJump(true);
+            player.shouldJump = true;
         }
-        if (player.isSplitScreen)
+        if (player is SplitScreenPlayerController)
         {
-            if (Input.GetMouseButtonDown(1) && player.GetCanFlip())
+            if (Input.GetMouseButtonDown(1) && player.inventory.GetFlipToken())
             {
-                player.handleSplitScreenFlip();
+                SplitScreenPlayerController sspc = (SplitScreenPlayerController) player;
+                sspc.HandleSplitScreenFlip();
             }
             return;
         }
-        if (Input.GetMouseButton(1) && player.GetCanFlip())
+        if (Input.GetMouseButton(1) && player.inventory.GetFlipToken())
         {
             
             indexCounter = levelManager.GetCurrentPage();
@@ -126,7 +127,7 @@ public class InputController : MonoBehaviour
             {
                 gui.OpenSelector();
             }
-            player.SetShouldFlip(true);
+            player.shouldFlip = true;
         }
     }
 

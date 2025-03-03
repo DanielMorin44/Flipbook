@@ -1,17 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
+[RequireComponent(typeof(PlayerAudioManager))]
+[RequireComponent(typeof(InventoryManager))]
 public class PlayerController : MonoBehaviour
 {
-    // This 'split-screen' config option is gross and should be replaced with some inheritance model
-    public bool isSplitScreen;
-    private bool sideA;
-    public TilemapCollider2D sideAMap;
-    public TilemapCollider2D sideBMap;
-    public GameObject playerShadow;
-
     // Public vars
     // Speeds
     public float groundHorizontalSpeed;
@@ -45,41 +37,23 @@ public class PlayerController : MonoBehaviour
     public Animator anim;
     public Animator shadowAnimator;
 
-    //Sounds
-    public AudioSource audioSource;
-    public AudioClip[] audioClips;
+    protected PlayerAudioManager audioManager;
+    public InventoryManager inventory;
 
     // Private vars
     // state vars
-    protected bool canWallJump, canRegularJump, shouldJump, jumping;
-    public void SetShouldJump(bool value)
-    {
-        shouldJump = value;
-    }
-    public bool GetShouldJump()
-    {
-        return shouldJump;
-    }
+    protected bool canWallJump = false;
+    protected bool canRegularJump = false;
+    public bool shouldJump;
+    protected bool jumping;
+
     public bool GetCanJump()
     {
         return canRegularJump || canWallJump;
     }
 
-    protected bool canFlip, shouldFlip;
-    public void SetShouldFlip(bool value)
-    {
-        shouldFlip = value;
-    }
-    public void SetCanFlip(bool value)
-    {
-        canFlip = value;
-    }
-    public bool GetCanFlip()
-    {
-        return canFlip;
-    }
-
-    protected bool shouldReset;
+    public bool shouldFlip;
+    protected bool shouldReset = false;
     public void SetShouldReset(bool value)
     {
         shouldReset = value;
@@ -100,16 +74,15 @@ public class PlayerController : MonoBehaviour
         holdForWallSlide = !holdForWallSlide;
     }
 
-    protected bool isFacingRight;
-    protected float facing;
+    protected bool isFacingRight = true;
+    protected float facing = 1;
     bool isFrontTouchingWall;
-    protected bool wallSliding;
+    protected bool wallSliding = false;
     bool wallJumping;
     bool inAir;
-    int hasCoin = -1;
 
     // Private Collection vars
-    protected int numKeys;
+    protected int numKeys = 0;
 
     // Private slope vars
     private float slopeDownAngle;
@@ -122,7 +95,7 @@ public class PlayerController : MonoBehaviour
     private float wallAngle = 87;
 
     // Time Vars
-    protected float moveLockedTime;
+    protected float moveLockedTime = 0f;
     public float GetMoveLockedTime()
     {
         return moveLockedTime;
@@ -150,24 +123,21 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        canWallJump = false;
-        canRegularJump = false;
-        canFlip = isSplitScreen;
-        shouldReset = false;
-        wallSliding = false;
-        isFacingRight = true;
-        numKeys = 0;
-        facing = 1;
-        moveLockedTime = 0f;
+        Initialize();
+    }
+
+    protected void Initialize()
+    {
         coyoteTimeRemaining = coyoteTime;
-        terrain = isSplitScreen ? LayerMask.GetMask("SideA") : LayerMask.GetMask("terrain");
-        if(sideBMap != null) sideBMap.enabled = false;
-        sideA = true;
+        terrain = LayerMask.GetMask("terrain");
         rb2d = GetComponent<Rigidbody2D>();
         box = GetComponent<BoxCollider2D>();
         circle = GetComponent<CircleCollider2D>();
         inputController = GameObject.FindFirstObjectByType<InputController>();
         levelManager = GameObject.FindFirstObjectByType<LevelManager>();
+        audioManager = GetComponent<PlayerAudioManager>();
+        inventory = GetComponent<InventoryManager>();
+        inventory.RemoveFlipToken();
     }
 
     // Update is called once per frame
@@ -405,7 +375,7 @@ public class PlayerController : MonoBehaviour
             jumpedSinceLanded = true;
 
         }
-        SetShouldJump(false);
+        shouldJump = false;
         canWallJump = false;
         canRegularJump = false;
 
@@ -434,72 +404,16 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    private bool CheckSplitScreenFlipAllowed()
-    {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(box.bounds.center,
-                                                        new Vector2(box.bounds.size.x, box.bounds.size.y * .9f),
-                                                        0,
-                                                        sideA ? LayerMask.GetMask("SideA") : LayerMask.GetMask("SideB"));
-
-        if (colliders.Length != 0)
-        {
-            Debug.Log("We collided");
-            return false;
-        }
-        return true;
-        /*for (int i = 0; i < colliders.Length; i++)
-        {
-            Component collider = flipCandidates[index].GetComponentInChildren(typeof(Grid)).GetComponentInChildren(typeof(CompositeCollider2D));
-            if (colliders[i].gameObject.name == collider.gameObject.name)
-            {
-                flipCandidates[index].SetActive(false);
-                return false;
-            }
-        }*/
-    }
-
-    public void handleSplitScreenFlip()
-    {
-        if (CheckSplitScreenFlipAllowed())
-        {
-            Debug.Log("We Flipped!");
-            sideA = !sideA;
-            if (sideA)
-            {
-                terrain = LayerMask.GetMask("SideA");
-                gameObject.layer = LayerMask.NameToLayer("SideAPlayer");
-                playerShadow.layer = LayerMask.NameToLayer("SideBPlayer");
-                sideAMap.enabled = true;
-                sideBMap.enabled = false;
-            } else
-            {
-                terrain = LayerMask.GetMask("SideB");
-                gameObject.layer = LayerMask.NameToLayer("SideBPlayer");
-                playerShadow.layer = LayerMask.NameToLayer("SideAPlayer");
-                sideBMap.enabled = true;
-                sideAMap.enabled = false;
-            }
-        }
-    }
-
-    private void Flip()
+    protected void Flip()
     {
         shouldFlip = false;
-        if (isSplitScreen)
-        {
-            handleSplitScreenFlip();
-        }
-        else
-        {
-            // CanFlip = true if flip failed
-            inputController.InitiateFlip();
-        }
+        inputController.InitiateFlip();
     }
 
     public void FlipSuccess()
     {
-        canFlip = isSplitScreen;
-        PlayClip("page flip");
+        inventory.RemoveFlipToken();
+        AudioTrigger(PlayerAudioSignal.PAGE_FLIP);
     }
 
     public void Kill()
@@ -524,36 +438,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool TryUnlock()
-    {
-        if (numKeys > 0)
-        {
-            numKeys--;
-            return true;
-        }
-        return false;
-    }
-
-    public void AddKey(int value)
-    {
-        numKeys += value;
-    }
-
-    public int GetNumKeys()
-    {
-        return numKeys;
-    }
-
-    public int HoldingCoin()
-    {
-        return hasCoin;
-    }
-
-    public void AddCoin(int id)
-    {
-        hasCoin = id;
-    }
-
     private void setAnimationVal(string fieldName, bool value)
     {
         anim.SetBool(fieldName, value);
@@ -563,62 +447,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-    //Audio
-    public void PlayClip(string clipName)
+    public void AudioTrigger(PlayerAudioSignal signal)
     {
-        int clipToPlay = 0;
-        bool continuous = false;
-
-        switch (clipName)
-        {
-            case "light footstep":
-                clipToPlay = 0;
-                break;
-            case "big footstep":
-                clipToPlay = 1;
-                break;
-            case "jump":
-                clipToPlay = 2;
-                break;
-            case "land":
-                clipToPlay = 3;
-                break;
-            case "gem":
-                clipToPlay = 4;
-                break;
-            case "page flip":
-                clipToPlay = 5;
-                break;
-            case "wallslide":
-                clipToPlay = 6;
-                continuous = true;
-                break;
-            default:
-                clipToPlay = -1; //safety if there is no string match
-                Debug.Log("Sound not found: " + clipName);
-                break;
-        }
-
-
-        if (clipToPlay >= 0 && clipToPlay < audioClips.Length)
-        {
-
-            if (continuous)
-            {
-                audioSource.clip = audioClips[clipToPlay];
-                audioSource.Play();
-            }
-            else
-            {
-                audioSource.PlayOneShot(audioClips[clipToPlay]);
-            }
-        }
-
-    }
-
-    public void StopClip()
-    {
-        audioSource.clip = null; // don't use audioSource.Stop() because it messes with the OneShots
+        audioManager.Signal(signal);
     }
 }

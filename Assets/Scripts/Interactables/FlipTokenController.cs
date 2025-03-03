@@ -10,11 +10,11 @@ public class FlipTokenController : MonoBehaviour
         {
             PlayerController player = collision.GetComponent<PlayerController>();
             // If player can't flip
-            if (!player.GetCanFlip())
+            if (!player.inventory.GetFlipToken())
             {
                 //Destroy Token and allow player to flip
-                player.SetCanFlip(true);
-                player.PlayClip("gem");
+                player.inventory.AddFlipToken();
+                player.AudioTrigger(PlayerAudioSignal.GEM);
                 Destroy(gameObject);
             }
         }

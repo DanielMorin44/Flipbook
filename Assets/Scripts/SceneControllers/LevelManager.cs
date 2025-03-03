@@ -169,17 +169,17 @@ public class LevelManager : MonoBehaviour
             PlayerData.highestLevel = activeLevel;
         }
         // If player has a coin, Update the stored value of the coin
-        if(player.HoldingCoin() > -1)
+        if(player.inventory.HasCoin())
         {
             //Make sure no other level has this coin value
             for (int i = 0; i < PlayerData.coins.Length; i++)
             {
-                if (PlayerData.coins[i] == player.HoldingCoin())
+                if (PlayerData.coins[i] == player.inventory.GetCoinId())
                 {
                     PlayerData.coins[i] = -1;
                 }
             }
-            PlayerData.coins[activeLevel] = player.HoldingCoin();
+            PlayerData.coins[activeLevel] = player.inventory.GetCoinId();
         }
 
         PlayerData.pageToLoad = page;
