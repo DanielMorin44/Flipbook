@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     }
 
     protected bool isFacingRight = true;
-    protected float facing = 1;
+    public float facing = 1;
     bool isFrontTouchingWall;
     protected bool wallSliding = false;
     bool wallJumping;

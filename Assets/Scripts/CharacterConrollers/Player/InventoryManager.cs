@@ -1,10 +1,14 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
+
     private int coinId = -1;
     private int keys = 0;
     private bool flip = false;
+    private List<Collectible> inventory = new List<Collectible>();
 
     public int GetCoinId()
     {
@@ -31,23 +35,23 @@ public class InventoryManager : MonoBehaviour
         return keys;
     }
 
-    public void AddKey()
+    public void AddKey(KeyController key)
     {
+        Debug.Log(inventory.Count);
         keys++;
-    }
-
-    public void SetKeys(int newKeys)
-    {
-        keys = newKeys;
+        AddItemToInventory(key);
     }
 
     public bool Unlock()
     {
-        if (keys <= 0)
+        Collectible token = inventory.Find(x => { return x is KeyController; });
+        if (token == null)
         {
             return false;
         }
         keys--;
+        RemoveItemFromInventory(token);
+        Destroy(token.gameObject);
         return true;
     }
 
@@ -56,18 +60,58 @@ public class InventoryManager : MonoBehaviour
         return flip;
     }
 
-    public bool AddFlipToken()
+    public bool AddFlipToken(FlipTokenController token)
     {
         if (flip)
         {
             return false;
         }
         flip = true;
+        AddItemToInventory(token);
         return true;
     }
 
     public void RemoveFlipToken()
     {
         flip = false;
+        Collectible token = inventory.Find(x => { return x is FlipTokenController; });
+        if (token == null)
+        {
+            return;
+        }
+        RemoveItemFromInventory(token);
+        Destroy(token.gameObject);
+    }
+
+    public void PickUpCoin(CoinController coin)
+    {
+        SetCoinId(coin.id);
+        AddItemToInventory(coin);
+    }
+
+    private void AddItemToInventory(Collectible item)
+    {
+        if (inventory.Count == 0)
+        {
+            Debug.Log("Here1");
+            item.SetFollowTarget(transform);
+        } else
+        {
+            Debug.Log(inventory.Count);
+            item.SetFollowTarget(inventory.Last().transform);
+        }
+        inventory.Add(item);
+    }
+    
+    private void RemoveItemFromInventory(Collectible item)
+    {
+        Collectible nextItem = inventory.SkipWhile(x => x != item).Skip(1).DefaultIfEmpty(null).FirstOrDefault();
+        if(nextItem != null)
+        {
+            Collectible prevItem = inventory.TakeWhile(x => x != item).DefaultIfEmpty(null).LastOrDefault();
+            Transform toFollowTarget = prevItem == null ? transform : prevItem.transform;
+            nextItem.SetFollowTarget(toFollowTarget);
+        }
+        inventory.Remove(item);
     }
 }
