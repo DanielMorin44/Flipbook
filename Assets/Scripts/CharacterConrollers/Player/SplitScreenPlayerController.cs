@@ -16,7 +16,7 @@ public class SplitScreenPlayerController : PlayerController
     new void Initialize()
     {
         base.Initialize();
-        inventory.AddFlipToken();
+        inventory.AddFlipToken(new FlipTokenController());
         terrain = LayerMask.GetMask("SideA");
         sideA = true;
         sideBMap.enabled = false;

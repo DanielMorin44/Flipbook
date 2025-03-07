@@ -9588,6 +9588,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8499143497396908531, guid: ab70084807845c94294150de515757a3, type: 3}
+      propertyPath: smoothTime
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 8499143497396908540, guid: ab70084807845c94294150de515757a3, type: 3}
       propertyPath: m_Name
       value: FlipToken (3)
@@ -10130,6 +10134,14 @@ PrefabInstance:
     - target: {fileID: 8499143497396908528, guid: ab70084807845c94294150de515757a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8499143497396908531, guid: ab70084807845c94294150de515757a3, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 596940443}
+    - target: {fileID: 8499143497396908531, guid: ab70084807845c94294150de515757a3, type: 3}
+      propertyPath: smoothTime
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8499143497396908540, guid: ab70084807845c94294150de515757a3, type: 3}
       propertyPath: m_Name
@@ -69185,6 +69197,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 326229005}
     m_Modifications:
+    - target: {fileID: 106239756307801976, guid: 22a1a89b03b8e8e488089fa91aa84296, type: 3}
+      propertyPath: smoothTime
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 4657278360893015665, guid: 22a1a89b03b8e8e488089fa91aa84296, type: 3}
       propertyPath: m_LocalPosition.x
       value: 110.43
@@ -116928,6 +116944,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 596940443}
     - target: {fileID: 7675633065868447229, guid: 1f0d15856f82fd24195c731c784e4026, type: 3}
+      propertyPath: activeLevel
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7675633065868447229, guid: 1f0d15856f82fd24195c731c784e4026, type: 3}
       propertyPath: playerCollider
       value: 
       objectReference: {fileID: 596940444}
@@ -117242,14 +117262,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skybox
       objectReference: {fileID: 0}
-    - target: {fileID: 2343857868177048068, guid: 9fed03abf52b02549b68be13c3a6d274, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2343857868177048068, guid: 9fed03abf52b02549b68be13c3a6d274, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -117278,7 +117290,7 @@ PrefabInstance:
       objectReference: {fileID: 774456570}
     - target: {fileID: 2040183272204827029, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -84
+      value: -0.58999634
       objectReference: {fileID: 0}
     - target: {fileID: 3001319502344088282, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -117318,7 +117330,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5810500344445419612, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -156
+      value: -1.2000122
       objectReference: {fileID: 0}
     - target: {fileID: 8255620911392340602, guid: 8e79b71536fade5488acc34fdb2ea379, type: 3}
       propertyPath: m_Name
