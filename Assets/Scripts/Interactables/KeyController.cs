@@ -9,7 +9,7 @@ public class KeyController : MonoBehaviour
         if (collision.tag == "Player")
         {
             //Add a key and destroy this key
-            collision.GetComponent<PlayerController>().AddKey(1);
+            collision.GetComponent<PlayerController>().inventory.AddKey();
             Destroy(gameObject);
         }
     }

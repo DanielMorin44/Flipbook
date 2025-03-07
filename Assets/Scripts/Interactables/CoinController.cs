@@ -13,17 +13,17 @@ public class CoinController : MonoBehaviour
         {
             PlayerController player = collision.GetComponent<PlayerController>();
             // If player isn't holding a coin
-            if (player.HoldingCoin() == -1)
+            if (!player.inventory.HasCoin())
             {
                 if (locked)
                 {
-                    locked = !player.TryUnlock(); // If unlock successful, switch this to not locked
+                    locked = !player.inventory.Unlock(); // If unlock successful, switch this to not locked
                 }
                 //Destroy Coin and Give to player
                 if (!locked)
                 {
-                    player.AddCoin(id);
-                    player.PlayClip("gem");
+                    player.inventory.SetCoinId(id);
+                    player.AudioTrigger(PlayerAudioSignal.GEM);
                     Destroy(gameObject);
                 }
             }

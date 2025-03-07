@@ -9890,6 +9890,34 @@ PrefabInstance:
       propertyPath: m_PlayOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: gem
+      value: 
+      objectReference: {fileID: 8300000, guid: 94cc7b4a26bb9054f92d6c072f194d9e, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: jump
+      value: 
+      objectReference: {fileID: 8300000, guid: ec8f4ef9863704143b7c9af98e49b263, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: land
+      value: 
+      objectReference: {fileID: 8300000, guid: 9c1a8d2b1338c8440be1d24eaa5204e7, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: pageflip
+      value: 
+      objectReference: {fileID: 8300000, guid: 72f915b832718944cb71de401481ff3f, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: wallSlide
+      value: 
+      objectReference: {fileID: 8300000, guid: b8e0c6814d452494da5cff8b8f20d5d1, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: bigFootstep
+      value: 
+      objectReference: {fileID: 8300000, guid: db2517694c4d06549a52e20679408fbe, type: 3}
+    - target: {fileID: 3001471071827256658, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
+      propertyPath: lightFootstep
+      value: 
+      objectReference: {fileID: 8300000, guid: af683e4b5fa7364459e754dad48bf88c, type: 3}
     m_RemovedComponents:
     - {fileID: 2806105389306594997, guid: 87ab47acb6614fd4b89fde2f37f9a8d4, type: 3}
     m_RemovedGameObjects: []

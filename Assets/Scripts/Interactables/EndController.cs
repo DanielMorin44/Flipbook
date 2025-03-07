@@ -20,7 +20,7 @@ public class EndController : MonoBehaviour
             PlayerController player = collision.GetComponent<PlayerController>();
             if (locked)
             {
-                locked = !player.TryUnlock(); // If unlock successful, switch this to not locked
+                locked = !player.inventory.Unlock(); // If unlock successful, switch this to not locked
             }
             // End the stage
             if (!locked)

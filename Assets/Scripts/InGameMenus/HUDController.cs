@@ -19,8 +19,8 @@ public class HUDController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        numKeysText.text = "Num Keys: " + player.GetNumKeys().ToString();
-        flipText.text = player.GetCanFlip() ? "Can Flip = true" : "Can Flip = false";
+        numKeysText.text = "Num Keys: " + player.inventory.GetKeys().ToString();
+        flipText.text = player.inventory.GetFlipToken() ? "Can Flip = true" : "Can Flip = false";
         pageNumberText.text = "Page: " + (levelManager.GetOpenedPage()+1).ToString();
     }
 }
