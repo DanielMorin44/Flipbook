@@ -17,7 +17,7 @@ TagManager:
   - SideAPlayer
   - SideBPlayer
   - Bookwyrm
-  - 
+  - Background
   - 
   - 
   - 
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 665823945
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
