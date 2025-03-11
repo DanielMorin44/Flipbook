@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HUDController : MonoBehaviour
 {
     public Text numKeysText;
-    public Text pageNumberText;
+    public TextMeshProUGUI pageNumberText;
     public PlayerController player;
     public LevelManager levelManager;
 
