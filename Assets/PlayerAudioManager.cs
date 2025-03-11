@@ -12,6 +12,7 @@ public class PlayerAudioManager : MonoBehaviour
     public AudioClip pageflip;
     public AudioClip wallSlide;
     public AudioClip oof;
+    public AudioClip lever;
 
     private AudioSource source;
     private Dictionary<PlayerAudioSignal, AudioTrack> audioStore = new Dictionary<PlayerAudioSignal, AudioTrack>();
@@ -38,6 +39,7 @@ public class PlayerAudioManager : MonoBehaviour
         audioStore.Add(PlayerAudioSignal.PAGE_FLIP, new AudioTrack(pageflip, false));
         audioStore.Add(PlayerAudioSignal.WALL_SLIDE, new AudioTrack(wallSlide, true));
         audioStore.Add(PlayerAudioSignal.OOF, new AudioTrack(oof, false));
+        audioStore.Add(PlayerAudioSignal.LEVER, new AudioTrack(lever, false));
     }
 
     public void Signal(PlayerAudioSignal signal)
@@ -59,4 +61,4 @@ public class PlayerAudioManager : MonoBehaviour
     }
 }
 
-public enum PlayerAudioSignal { LIGHT_FOOTSTEP, BIG_FOOTSTEP, JUMP, LAND, GEM, PAGE_FLIP, WALL_SLIDE, OOF }
+public enum PlayerAudioSignal { LIGHT_FOOTSTEP, BIG_FOOTSTEP, JUMP, LAND, GEM, PAGE_FLIP, WALL_SLIDE, OOF, LEVER }
