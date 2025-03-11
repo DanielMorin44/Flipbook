@@ -3,12 +3,12 @@ using UnityEngine;
 public class SwitchBlockController : MonoBehaviour
 {
     public GameObject[] blocks;
-    public void Activate(bool enabled)
+    public void Flip()
     {
 
         foreach (GameObject obj in blocks)
         {
-            obj.SetActive(enabled);
+            obj.SetActive(!obj.activeSelf);
             
         }
     }

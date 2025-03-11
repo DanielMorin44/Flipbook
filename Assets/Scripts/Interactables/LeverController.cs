@@ -43,7 +43,7 @@ public class Lever : MonoBehaviour
         pulled = !pulled;
 
         foreach (SwitchBlockController sbc in affectedSwitchBlocks){
-            sbc.Activate(!pulled);
+            sbc.Flip();
         }
 
         anim.SetBool("pulled", pulled);

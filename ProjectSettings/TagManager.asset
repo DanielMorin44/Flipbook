@@ -42,8 +42,14 @@ TagManager:
   - name: Background
     uniqueID: 665823945
     locked: 0
+  - name: Background Props
+    uniqueID: 600280567
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Foreground Props
+    uniqueID: 2450770775
     locked: 0
   m_RenderingLayers:
   - Default
