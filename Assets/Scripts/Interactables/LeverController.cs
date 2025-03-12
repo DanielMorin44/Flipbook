@@ -21,23 +21,6 @@ public class Lever : MonoBehaviour
         }
     }
 
-    private void PullLever()
-    {
-        if (!pulled){
-            pulled = true;
-            anim.SetBool("pulled", true);
-;        }
-    }
-
-    private void LiftLever()
-    {
-        if (pulled)
-        {
-            pulled = false;
-            anim.SetBool("pulled", false);
-        }
-    }
-
     private void SwitchLever()
     {
         pulled = !pulled;
