@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class OverworldController : MonoBehaviour
 {
     public Button[] levelSelectButtons;
-    public Text[] coinTrack;
+    public TextMeshProUGUI[] coinTrack;
 
     // Start is called before the first frame update
     void Start()

@@ -418,13 +418,15 @@ public class PlayerController : MonoBehaviour
 
     public void Kill()
     {
-        levelManager.PlayerDied();
+        anim.SetBool("isDead", true);
+        rb2d.simulated = false;
+        Invoke("ResetPlayer", 0.5f);
     }
 
     private void ResetPlayer()
     {
         SetShouldReset(false);
-        Kill();
+        levelManager.PlayerDied();
     }
 
     private void OnDrawGizmosSelected()
