@@ -2,14 +2,17 @@ using UnityEngine;
 
 public class BookwyrmBehaviorTrigger : MonoBehaviour
 {
-    public BookwyrmBehaviorAction action;
-
     public BookwyrmController agent;
+    public BookwyrmBehaviorAction action;
+    public Side triggerSide;
+    public Side damageSide;
+    public float delay;
+    public float duration;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         // If player touches token
-        if (collision.tag == "Player" && collision is BoxCollider2D)
+        if (collision.tag == "Player" && collision is BoxCollider2D && collision.GetComponent<SplitScreenPlayerController>().GetSide() == triggerSide)
         {
             HandleTrigger();
             Destroy(gameObject);
@@ -20,23 +23,14 @@ public class BookwyrmBehaviorTrigger : MonoBehaviour
     {
         switch (action)
         {
-            case BookwyrmBehaviorAction.TopSwipe:
-                agent.TopSwipe();
+            case BookwyrmBehaviorAction.Swipe:
+                agent.Swipe(damageSide, delay);
                 break;
-            case BookwyrmBehaviorAction.BottomSwipe:
-                agent.BottomSwipe();
-                break;
-            case BookwyrmBehaviorAction.TopFireBeath:
-                agent.TopFireBreath();
-                break;
-            case BookwyrmBehaviorAction.BottomFireBreath:
-                agent.BottomFireBreath();
-                break;
-            case BookwyrmBehaviorAction.Chomp:
-                agent.Chomp();
+            case BookwyrmBehaviorAction.FireBreath:
+                agent.FireBreath(damageSide, delay, duration);
                 break;
         }
     }
 
-    public enum BookwyrmBehaviorAction { TopSwipe, BottomSwipe, TopFireBeath, BottomFireBreath, Chomp }
+    public enum BookwyrmBehaviorAction { Swipe, FireBreath }
 }
