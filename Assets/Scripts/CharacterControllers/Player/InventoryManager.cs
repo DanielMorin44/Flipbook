@@ -93,7 +93,6 @@ public class InventoryManager : MonoBehaviour
     {
         if (inventory.Count == 0)
         {
-            Debug.Log("Here1");
             item.SetFollowTarget(transform);
         } else
         {

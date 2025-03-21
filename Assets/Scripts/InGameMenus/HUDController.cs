@@ -4,7 +4,6 @@ using TMPro;
 
 public class HUDController : MonoBehaviour
 {
-    public Text numKeysText;
     public TextMeshProUGUI pageNumberText;
     public TextMeshProUGUI tipText;
     public PlayerController player;
